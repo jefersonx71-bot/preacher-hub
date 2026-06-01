@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PulpitoIdRouteImport } from './routes/pulpito.$id'
 import { Route as EditorIdRouteImport } from './routes/editor.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PulpitoIdRoute = PulpitoIdRouteImport.update({
+  id: '/pulpito/$id',
+  path: '/pulpito/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EditorIdRoute = EditorIdRouteImport.update({
@@ -26,27 +32,31 @@ const EditorIdRoute = EditorIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/editor/$id': typeof EditorIdRoute
+  '/pulpito/$id': typeof PulpitoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/editor/$id': typeof EditorIdRoute
+  '/pulpito/$id': typeof PulpitoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/editor/$id': typeof EditorIdRoute
+  '/pulpito/$id': typeof PulpitoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/editor/$id'
+  fullPaths: '/' | '/editor/$id' | '/pulpito/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/editor/$id'
-  id: '__root__' | '/' | '/editor/$id'
+  to: '/' | '/editor/$id' | '/pulpito/$id'
+  id: '__root__' | '/' | '/editor/$id' | '/pulpito/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EditorIdRoute: typeof EditorIdRoute
+  PulpitoIdRoute: typeof PulpitoIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pulpito/$id': {
+      id: '/pulpito/$id'
+      path: '/pulpito/$id'
+      fullPath: '/pulpito/$id'
+      preLoaderRoute: typeof PulpitoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/editor/$id': {
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EditorIdRoute: EditorIdRoute,
+  PulpitoIdRoute: PulpitoIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
