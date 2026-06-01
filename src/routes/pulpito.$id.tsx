@@ -1,0 +1,155 @@
+import { useEffect, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowLeft, BookOpen, ChevronDown } from "lucide-react";
+import { getSermon, type Sermon } from "@/lib/sermons";
+import { PulpitTimer } from "@/components/PulpitTimer";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { cn } from "@/lib/utils";
+
+export const Route = createFileRoute("/pulpito/$id")({
+  head: () => ({
+    meta: [{ title: "Modo Púlpito — PregaDynamic" }],
+  }),
+  component: Pulpit,
+});
+
+function Pulpit() {
+  const { id } = Route.useParams();
+  const [sermon, setSermon] = useState<Sermon | null | undefined>(undefined);
+  const [open, setOpen] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    setSermon(getSermon(id) ?? null);
+  }, [id]);
+
+  const toggle = (topicId: string) =>
+    setOpen((prev) => {
+      const next = new Set(prev);
+      if (next.has(topicId)) next.delete(topicId);
+      else next.add(topicId);
+      return next;
+    });
+
+  if (sermon === undefined) return <div className="min-h-screen bg-background" />;
+
+  if (sermon === null) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-4 text-center">
+        <p className="font-display text-xl text-foreground">Esboço não encontrado</p>
+        <Link to="/" className="text-accent underline-offset-4 hover:underline">
+          Voltar ao painel
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Sticky control bar */}
+      <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3 px-4 py-3">
+          <Link
+            to="/"
+            aria-label="Voltar ao painel"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
+          >
+            <ArrowLeft className="size-5" />
+          </Link>
+          <PulpitTimer />
+          <ThemeToggle />
+        </div>
+      </header>
+
+      <main className="mx-auto w-full max-w-2xl px-5 pb-24 pt-8">
+        {/* Title block */}
+        <div className="text-center">
+          {sermon.baseVerse && (
+            <p className="inline-flex items-center gap-1.5 rounded-full bg-gold/12 px-3 py-1 text-sm font-semibold text-gold">
+              <BookOpen className="size-3.5" />
+              {sermon.baseVerse}
+            </p>
+          )}
+          <h1 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight text-foreground text-balance sm:text-5xl">
+            {sermon.title}
+          </h1>
+          {sermon.theme && (
+            <p className="mx-auto mt-3 max-w-xl text-lg text-muted-foreground text-balance">
+              {sermon.theme}
+            </p>
+          )}
+        </div>
+
+        {sermon.introduction && (
+          <div className="mt-8 rounded-2xl border-l-4 border-gold bg-card p-5 shadow-soft">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Introdução</p>
+            <p className="mt-2 whitespace-pre-wrap text-lg leading-relaxed text-foreground">
+              {sermon.introduction}
+            </p>
+          </div>
+        )}
+
+        {/* Collapsible outline */}
+        <div className="mt-8 space-y-3">
+          {sermon.topics.map((topic) => {
+            const isOpen = open.has(topic.id);
+            return (
+              <div
+                key={topic.id}
+                className={cn(
+                  "overflow-hidden rounded-2xl border bg-card shadow-soft transition-colors",
+                  isOpen ? "border-gold/50" : "border-border",
+                )}
+              >
+                <button
+                  type="button"
+                  onClick={() => toggle(topic.id)}
+                  aria-expanded={isOpen}
+                  className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
+                >
+                  <span className="font-display text-xl font-semibold leading-snug text-foreground sm:text-2xl">
+                    {topic.title}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "size-6 shrink-0 text-gold transition-transform duration-300",
+                      isOpen && "rotate-180",
+                    )}
+                  />
+                </button>
+                <div
+                  className={cn(
+                    "grid transition-all duration-300 ease-in-out",
+                    isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+                  )}
+                >
+                  <div className="overflow-hidden">
+                    <p className="whitespace-pre-wrap px-5 pb-5 text-lg leading-relaxed text-foreground/90">
+                      {topic.content || "Sem conteúdo detalhado."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-10 flex justify-center gap-3 text-sm">
+          <button
+            type="button"
+            onClick={() => setOpen(new Set(sermon.topics.map((t) => t.id)))}
+            className="rounded-full border border-border px-4 py-2 font-medium text-muted-foreground hover:text-foreground"
+          >
+            Expandir tudo
+          </button>
+          <button
+            type="button"
+            onClick={() => setOpen(new Set())}
+            className="rounded-full border border-border px-4 py-2 font-medium text-muted-foreground hover:text-foreground"
+          >
+            Recolher tudo
+          </button>
+        </div>
+      </main>
+    </div>
+  );
+}

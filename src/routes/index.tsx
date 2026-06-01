@@ -1,29 +1,144 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Plus, Search, Sparkles } from "lucide-react";
+import { useSermons } from "@/lib/sermons";
+import { SermonCard } from "@/components/SermonCard";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "PregaDynamic — Seus Esboços" },
+      {
+        name: "description",
+        content:
+          "Painel com todos os seus esboços de pregação, busca rápida e o Modo Púlpito para pregar com sumários retráteis.",
+      },
     ],
   }),
-  component: Index,
+  component: Dashboard,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Dashboard() {
+  const { sermons } = useSermons();
+  const [query, setQuery] = useState("");
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+
+  const tags = useMemo(() => {
+    const set = new Set<string>();
+    sermons.forEach((s) => s.tags.forEach((t) => set.add(t)));
+    return Array.from(set);
+  }, [sermons]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return sermons
+      .filter((s) => (activeTag ? s.tags.includes(activeTag) : true))
+      .filter((s) =>
+        q
+          ? s.title.toLowerCase().includes(q) || s.baseVerse.toLowerCase().includes(q)
+          : true,
+      )
+      .sort((a, b) => b.updatedAt - a.updatedAt);
+  }, [sermons, query, activeTag]);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 sm:pt-10">
+        {/* Header */}
+        <header className="flex items-start justify-between">
+          <div>
+            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+              <Sparkles className="size-3.5" /> PregaDynamic
+            </p>
+            <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              Seus Esboços
+            </h1>
+          </div>
+          <ThemeToggle />
+        </header>
+
+        {/* Search */}
+        <div className="relative mt-6">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Buscar por título ou versículo..."
+            className="h-12 rounded-xl border-border bg-card pl-10 text-base shadow-soft"
+          />
+        </div>
+
+        {/* Tag filters */}
+        {tags.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            <TagChip label="Todos" active={activeTag === null} onClick={() => setActiveTag(null)} />
+            {tags.map((tag) => (
+              <TagChip
+                key={tag}
+                label={tag}
+                active={activeTag === tag}
+                onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* List */}
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {filtered.map((sermon) => (
+            <SermonCard key={sermon.id} sermon={sermon} />
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <div className="mt-16 text-center">
+            <p className="font-display text-lg text-foreground">Nenhum esboço encontrado</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Ajuste a busca ou crie um novo esboço.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Floating create button */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20 flex justify-center pb-6">
+        <Link
+          to="/editor/$id"
+          params={{ id: "new" }}
+          className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3.5 font-semibold text-gold-foreground shadow-gold transition-transform active:scale-95"
+        >
+          <Plus className="size-5" />
+          Criar Novo Esboço
+        </Link>
+      </div>
     </div>
+  );
+}
+
+function TagChip({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
+        active
+          ? "border-transparent bg-primary text-primary-foreground"
+          : "border-border bg-card text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {label}
+    </button>
   );
 }
