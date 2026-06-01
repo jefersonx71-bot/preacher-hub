@@ -77,12 +77,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { title: "PregaDynamic — Esboços de Pregação" },
+      { name: "description", content: "Organize seus esboços de pregação com sumários retráteis e um Modo Púlpito dinâmico para o momento da mensagem." },
+      { name: "author", content: "PregaDynamic" },
+      { property: "og:title", content: "PregaDynamic — Esboços de Pregação" },
+      { property: "og:description", content: "Organize seus esboços de pregação com sumários retráteis e um Modo Púlpito dinâmico." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
