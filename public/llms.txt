@@ -1,0 +1,14 @@
+# PregaDynamic
+
+> PregaDynamic é um aplicativo mobile-first para pregadores e palestrantes organizarem seus esboços de pregação de forma dinâmica, com sumários retráteis, Modo Púlpito e geração de esboços com IA.
+
+PregaDynamic ajuda a transformar anotações e textos do Google Docs em esboços inteligentes, organizados por categorias e prontos para o momento da mensagem.
+
+## Pages
+
+- [Painel de Esboços](/): Lista dos esboços salvos, busca rápida por título ou versículo e filtros por categoria.
+- [Importar com IA](/importar): Cole o texto da sua pregação e a IA gera um esboço estruturado automaticamente.
+
+## Optional
+
+- [Sitemap](/sitemap.xml): Lista de páginas públicas do site.

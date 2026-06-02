@@ -47,6 +47,7 @@ export function SortableTopic({ topic, index, onChange, onRemove }: Props) {
           value={topic.title}
           onChange={(e) => onChange({ title: e.target.value })}
           placeholder={`Tópico ${index + 1}`}
+          aria-label={`Título do tópico ${index + 1}`}
           className="h-9 border-none bg-transparent px-1 font-display text-base font-semibold shadow-none focus-visible:ring-0"
         />
         <button
@@ -62,6 +63,7 @@ export function SortableTopic({ topic, index, onChange, onRemove }: Props) {
         value={topic.content}
         onChange={(e) => onChange({ content: e.target.value })}
         placeholder="Subtópicos, ilustrações, versículos ou o texto completo..."
+        aria-label={`Conteúdo do tópico ${index + 1}`}
         className="mt-2 min-h-24 resize-y bg-secondary/40 text-sm leading-relaxed"
       />
     </div>

@@ -16,7 +16,15 @@ export const Route = createFileRoute("/")({
         content:
           "Painel com todos os seus esboços de pregação, busca rápida e o Modo Púlpito para pregar com sumários retráteis.",
       },
+      { property: "og:title", content: "PregaDynamic — Seus Esboços" },
+      {
+        property: "og:description",
+        content:
+          "Painel com todos os seus esboços de pregação, busca rápida e o Modo Púlpito para pregar com sumários retráteis.",
+      },
+      { property: "og:url", content: "/" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Dashboard,
 });
@@ -46,7 +54,7 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 sm:pt-10">
+      <main className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 sm:pt-10">
         {/* Header */}
         <header className="flex items-start justify-between">
           <div>
@@ -67,6 +75,7 @@ function Dashboard() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Buscar por título ou versículo..."
+            aria-label="Buscar esboços por título ou versículo"
             className="h-12 rounded-xl border-border bg-card pl-10 text-base shadow-soft"
           />
         </div>
@@ -105,7 +114,10 @@ function Dashboard() {
         )}
 
         {/* List */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <h2 className="mt-6 font-display text-lg font-semibold text-foreground">
+          Esboços salvos
+        </h2>
+        <div className="mt-3 grid gap-4 sm:grid-cols-2">
           {filtered.map((sermon) => (
             <SermonCard key={sermon.id} sermon={sermon} />
           ))}
@@ -119,7 +131,7 @@ function Dashboard() {
             </p>
           </div>
         )}
-      </div>
+      </main>
 
       {/* Floating create button */}
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20 flex justify-center pb-6">

@@ -8,7 +8,22 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/pulpito/$id")({
   head: () => ({
-    meta: [{ title: "Modo Púlpito — PregaDynamic" }],
+    meta: [
+      { title: "Modo Púlpito — PregaDynamic" },
+      {
+        name: "description",
+        content:
+          "Modo Púlpito: leia seu esboço com sumários retráteis, versículo base em destaque e cronômetro durante a pregação.",
+      },
+      { property: "og:title", content: "Modo Púlpito — PregaDynamic" },
+      {
+        property: "og:description",
+        content:
+          "Modo Púlpito: leia seu esboço com sumários retráteis, versículo base em destaque e cronômetro durante a pregação.",
+      },
+      { property: "og:url", content: "/pulpito" },
+    ],
+    links: [{ rel: "canonical", href: "/pulpito" }],
   }),
   component: Pulpit,
 });
