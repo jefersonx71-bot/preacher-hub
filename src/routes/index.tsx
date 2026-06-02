@@ -16,7 +16,15 @@ export const Route = createFileRoute("/")({
         content:
           "Painel com todos os seus esboços de pregação, busca rápida e o Modo Púlpito para pregar com sumários retráteis.",
       },
+      { property: "og:title", content: "PregaDynamic — Seus Esboços" },
+      {
+        property: "og:description",
+        content:
+          "Painel com todos os seus esboços de pregação, busca rápida e o Modo Púlpito para pregar com sumários retráteis.",
+      },
+      { property: "og:url", content: "/" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Dashboard,
 });
