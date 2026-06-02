@@ -18,7 +18,15 @@ export const Route = createFileRoute("/importar")({
         content:
           "Cole o texto da sua pregação do Google Docs e a IA transforma em um esboço inteligente e organizado.",
       },
+      { property: "og:title", content: "Importar com IA — PregaDynamic" },
+      {
+        property: "og:description",
+        content:
+          "Cole o texto da sua pregação do Google Docs e a IA transforma em um esboço inteligente e organizado.",
+      },
+      { property: "og:url", content: "/importar" },
     ],
+    links: [{ rel: "canonical", href: "/importar" }],
   }),
   component: ImportPage,
 });
