@@ -94,7 +94,7 @@ function ImportPage() {
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-3xl space-y-6 px-4 pb-24 pt-6">
+      <main className="mx-auto w-full max-w-3xl space-y-6 px-4 pb-24 pt-6">
         <div>
           <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
             <Sparkles className="size-3.5" /> IA do PregaDynamic
@@ -109,10 +109,14 @@ function ImportPage() {
         </div>
 
         <div className="space-y-3 rounded-2xl border border-border bg-card p-5 shadow-soft">
-          <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <Label
+            htmlFor="sermon-text"
+            className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+          >
             Texto da pregação
           </Label>
           <Textarea
+            id="sermon-text"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={EXAMPLE}
@@ -134,7 +138,7 @@ function ImportPage() {
             </Button>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
