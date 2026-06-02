@@ -144,11 +144,15 @@ function Editor() {
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-3xl space-y-6 px-4 pb-24 pt-6">
+      <main className="mx-auto w-full max-w-3xl space-y-6 px-4 pb-24 pt-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground">
+          {id === "new" ? "Novo Esboço" : "Editar Esboço"}
+        </h1>
         {/* Core fields */}
         <div className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-soft">
-          <Field label="Título do Sermão">
+          <Field label="Título do Sermão" htmlFor="sermon-title">
             <Input
+              id="sermon-title"
               value={sermon.title}
               onChange={(e) => set({ title: e.target.value })}
               placeholder="Ex: A Âncora da Alma"
@@ -156,23 +160,26 @@ function Editor() {
             />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Versículo Base">
+            <Field label="Versículo Base" htmlFor="sermon-verse">
               <Input
+                id="sermon-verse"
                 value={sermon.baseVerse}
                 onChange={(e) => set({ baseVerse: e.target.value })}
                 placeholder="Ex: Hebreus 6:19"
               />
             </Field>
-            <Field label="Tema Principal">
+            <Field label="Tema Principal" htmlFor="sermon-theme">
               <Input
+                id="sermon-theme"
                 value={sermon.theme}
                 onChange={(e) => set({ theme: e.target.value })}
                 placeholder="A ideia central da mensagem"
               />
             </Field>
           </div>
-          <Field label="Introdução">
+          <Field label="Introdução" htmlFor="sermon-intro">
             <Textarea
+              id="sermon-intro"
               value={sermon.introduction}
               onChange={(e) => set({ introduction: e.target.value })}
               placeholder="Como você vai abrir a mensagem..."
@@ -239,15 +246,26 @@ function Editor() {
             <Plus className="size-4" /> Adicionar Tópico
           </Button>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  htmlFor?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <Label
+        htmlFor={htmlFor}
+        className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+      >
         {label}
       </Label>
       {children}
