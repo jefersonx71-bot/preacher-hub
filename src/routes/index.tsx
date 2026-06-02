@@ -54,7 +54,7 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 sm:pt-10">
+      <main className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 sm:pt-10">
         {/* Header */}
         <header className="flex items-start justify-between">
           <div>
@@ -75,6 +75,7 @@ function Dashboard() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Buscar por título ou versículo..."
+            aria-label="Buscar esboços por título ou versículo"
             className="h-12 rounded-xl border-border bg-card pl-10 text-base shadow-soft"
           />
         </div>
