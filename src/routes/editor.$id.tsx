@@ -34,7 +34,22 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/editor/$id")({
   head: () => ({
-    meta: [{ title: "Editor de Esboço — PregaDynamic" }],
+    meta: [
+      { title: "Editor de Esboço — PregaDynamic" },
+      {
+        name: "description",
+        content:
+          "Edite título, versículo base, introdução, categorias e tópicos do seu esboço de pregação, com tópicos reordenáveis.",
+      },
+      { property: "og:title", content: "Editor de Esboço — PregaDynamic" },
+      {
+        property: "og:description",
+        content:
+          "Edite título, versículo base, introdução, categorias e tópicos do seu esboço de pregação, com tópicos reordenáveis.",
+      },
+      { property: "og:url", content: "/editor" },
+    ],
+    links: [{ rel: "canonical", href: "/editor" }],
   }),
   component: Editor,
 });
