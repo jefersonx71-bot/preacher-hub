@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, Search, Sparkles } from "lucide-react";
+import { Plus, Search, Sparkles, Wand2 } from "lucide-react";
 import { useSermons } from "@/lib/sermons";
 import { SermonCard } from "@/components/SermonCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
