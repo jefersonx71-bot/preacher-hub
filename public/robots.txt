@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://preacher-hub.lovable.app/sitemap.xml
