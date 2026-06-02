@@ -47,6 +47,7 @@ export function SortableTopic({ topic, index, onChange, onRemove }: Props) {
           value={topic.title}
           onChange={(e) => onChange({ title: e.target.value })}
           placeholder={`Tópico ${index + 1}`}
+          aria-label={`Título do tópico ${index + 1}`}
           className="h-9 border-none bg-transparent px-1 font-display text-base font-semibold shadow-none focus-visible:ring-0"
         />
         <button
