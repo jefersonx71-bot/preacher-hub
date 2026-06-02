@@ -114,7 +114,10 @@ function Dashboard() {
         )}
 
         {/* List */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <h2 className="mt-6 font-display text-lg font-semibold text-foreground">
+          Esboços salvos
+        </h2>
+        <div className="mt-3 grid gap-4 sm:grid-cols-2">
           {filtered.map((sermon) => (
             <SermonCard key={sermon.id} sermon={sermon} />
           ))}
@@ -128,7 +131,7 @@ function Dashboard() {
             </p>
           </div>
         )}
-      </div>
+      </main>
 
       {/* Floating create button */}
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20 flex justify-center pb-6">
