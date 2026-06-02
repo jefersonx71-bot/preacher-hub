@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PulpitoIdRouteImport } from './routes/pulpito.$id'
 import { Route as EditorIdRouteImport } from './routes/editor.$id'
@@ -17,6 +18,11 @@ import { Route as EditorIdRouteImport } from './routes/editor.$id'
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImportarRoute = ImportarRouteImport.update({
+  id: '/importar',
+  path: '/importar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,12 +43,14 @@ const EditorIdRoute = EditorIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/editor/$id': typeof EditorIdRoute
   '/pulpito/$id': typeof PulpitoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/editor/$id': typeof EditorIdRoute
   '/pulpito/$id': typeof PulpitoIdRoute
@@ -50,20 +58,28 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/editor/$id': typeof EditorIdRoute
   '/pulpito/$id': typeof PulpitoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/editor/$id' | '/pulpito/$id'
+  fullPaths: '/' | '/importar' | '/sitemap.xml' | '/editor/$id' | '/pulpito/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml' | '/editor/$id' | '/pulpito/$id'
-  id: '__root__' | '/' | '/sitemap.xml' | '/editor/$id' | '/pulpito/$id'
+  to: '/' | '/importar' | '/sitemap.xml' | '/editor/$id' | '/pulpito/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/importar'
+    | '/sitemap.xml'
+    | '/editor/$id'
+    | '/pulpito/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ImportarRoute: typeof ImportarRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   EditorIdRoute: typeof EditorIdRoute
   PulpitoIdRoute: typeof PulpitoIdRoute
@@ -76,6 +92,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/importar': {
+      id: '/importar'
+      path: '/importar'
+      fullPath: '/importar'
+      preLoaderRoute: typeof ImportarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -104,6 +127,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ImportarRoute: ImportarRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   EditorIdRoute: EditorIdRoute,
   PulpitoIdRoute: PulpitoIdRoute,
@@ -111,13 +135,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

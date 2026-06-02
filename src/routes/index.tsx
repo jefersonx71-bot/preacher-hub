@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, Search, Sparkles } from "lucide-react";
+import { Plus, Search, Sparkles, Wand2 } from "lucide-react";
 import { useSermons } from "@/lib/sermons";
 import { SermonCard } from "@/components/SermonCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -70,6 +70,24 @@ function Dashboard() {
             className="h-12 rounded-xl border-border bg-card pl-10 text-base shadow-soft"
           />
         </div>
+
+        {/* AI import banner */}
+        <Link
+          to="/importar"
+          className="mt-4 flex items-center gap-3 rounded-xl border border-gold/30 bg-gold/10 p-4 transition-colors hover:bg-gold/15"
+        >
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gold/20 text-gold">
+            <Wand2 className="size-5" />
+          </span>
+          <span className="min-w-0">
+            <span className="block font-display text-base font-semibold text-foreground">
+              Gerar esboço com IA
+            </span>
+            <span className="block text-sm text-muted-foreground">
+              Cole sua pregação do Google Docs e transforme em esboço inteligente
+            </span>
+          </span>
+        </Link>
 
         {/* Tag filters */}
         {tags.length > 0 && (
