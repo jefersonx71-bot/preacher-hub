@@ -177,9 +177,11 @@ function Pulpit() {
         {sermon.conclusion && (
           <div className="mt-8 rounded-2xl border-l-4 border-gold bg-card p-5 shadow-soft">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Conclusão</p>
-            <p className="mt-2 whitespace-pre-wrap text-lg leading-relaxed text-foreground">
-              {sermon.conclusion}
-            </p>
+            <ClickableText
+              text={sermon.conclusion}
+              onWord={studyWord}
+              className="mt-2 text-lg leading-relaxed text-foreground"
+            />
           </div>
         )}
 
