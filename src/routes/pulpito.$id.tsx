@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, ChevronDown } from "lucide-react";
+import { ArrowLeft, BookOpen, BookText, ChevronDown } from "lucide-react";
 import { getSermon, type Sermon } from "@/lib/sermons";
 import { PulpitTimer } from "@/components/PulpitTimer";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ClickableText } from "@/components/ClickableText";
+import { DictionaryDialog } from "@/components/DictionaryDialog";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/pulpito/$id")({
@@ -32,6 +34,18 @@ function Pulpit() {
   const { id } = Route.useParams();
   const [sermon, setSermon] = useState<Sermon | null | undefined>(undefined);
   const [open, setOpen] = useState<Set<string>>(new Set());
+  const [dictOpen, setDictOpen] = useState(false);
+  const [dictTerm, setDictTerm] = useState<string | null>(null);
+
+  const studyWord = (word: string) => {
+    setDictTerm(word);
+    setDictOpen(true);
+  };
+
+  const openDictionary = () => {
+    setDictTerm(null);
+    setDictOpen(true);
+  };
 
   useEffect(() => {
     setSermon(getSermon(id) ?? null);
@@ -71,6 +85,14 @@ function Pulpit() {
             <ArrowLeft className="size-5" />
           </Link>
           <PulpitTimer />
+          <button
+            type="button"
+            onClick={openDictionary}
+            aria-label="Abrir dicionário"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-gold"
+          >
+            <BookText className="size-5" />
+          </button>
           <ThemeToggle />
         </div>
       </header>
@@ -97,9 +119,11 @@ function Pulpit() {
         {sermon.introduction && (
           <div className="mt-8 rounded-2xl border-l-4 border-gold bg-card p-5 shadow-soft">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Introdução</p>
-            <p className="mt-2 whitespace-pre-wrap text-lg leading-relaxed text-foreground">
-              {sermon.introduction}
-            </p>
+            <ClickableText
+              text={sermon.introduction}
+              onWord={studyWord}
+              className="mt-2 text-lg leading-relaxed text-foreground"
+            />
           </div>
         )}
 
@@ -138,9 +162,11 @@ function Pulpit() {
                   )}
                 >
                   <div className="overflow-hidden">
-                    <p className="whitespace-pre-wrap px-5 pb-5 text-lg leading-relaxed text-foreground/90">
-                      {topic.content || "Sem conteúdo detalhado."}
-                    </p>
+                    <ClickableText
+                      text={topic.content || "Sem conteúdo detalhado."}
+                      onWord={studyWord}
+                      className="px-5 pb-5 text-lg leading-relaxed text-foreground/90"
+                    />
                   </div>
                 </div>
               </div>
@@ -151,9 +177,11 @@ function Pulpit() {
         {sermon.conclusion && (
           <div className="mt-8 rounded-2xl border-l-4 border-gold bg-card p-5 shadow-soft">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Conclusão</p>
-            <p className="mt-2 whitespace-pre-wrap text-lg leading-relaxed text-foreground">
-              {sermon.conclusion}
-            </p>
+            <ClickableText
+              text={sermon.conclusion}
+              onWord={studyWord}
+              className="mt-2 text-lg leading-relaxed text-foreground"
+            />
           </div>
         )}
 
@@ -174,7 +202,13 @@ function Pulpit() {
             Recolher tudo
           </button>
         </div>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          Dica: deu um branco? Toque em qualquer palavra para abrir um mini estudo.
+        </p>
       </main>
+
+      <DictionaryDialog open={dictOpen} term={dictTerm} onOpenChange={setDictOpen} />
     </div>
   );
 }
