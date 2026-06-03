@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, ChevronDown } from "lucide-react";
+import { ArrowLeft, BookOpen, BookText, ChevronDown } from "lucide-react";
 import { getSermon, type Sermon } from "@/lib/sermons";
 import { PulpitTimer } from "@/components/PulpitTimer";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ClickableText } from "@/components/ClickableText";
+import { DictionaryDialog } from "@/components/DictionaryDialog";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/pulpito/$id")({
