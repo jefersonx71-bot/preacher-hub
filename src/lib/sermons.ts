@@ -154,6 +154,10 @@ const SEED: Sermon[] = [
   },
 ];
 
+function normalize(sermons: Sermon[]): Sermon[] {
+  return sermons.map((s) => ({ ...s, conclusion: s.conclusion ?? "" }));
+}
+
 function load(): Sermon[] {
   if (typeof window === "undefined") return SEED;
   try {
@@ -162,7 +166,7 @@ function load(): Sermon[] {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED));
       return SEED;
     }
-    return JSON.parse(raw) as Sermon[];
+    return normalize(JSON.parse(raw) as Sermon[]);
   } catch {
     return SEED;
   }
