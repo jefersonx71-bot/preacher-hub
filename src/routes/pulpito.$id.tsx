@@ -34,6 +34,18 @@ function Pulpit() {
   const { id } = Route.useParams();
   const [sermon, setSermon] = useState<Sermon | null | undefined>(undefined);
   const [open, setOpen] = useState<Set<string>>(new Set());
+  const [dictOpen, setDictOpen] = useState(false);
+  const [dictTerm, setDictTerm] = useState<string | null>(null);
+
+  const studyWord = (word: string) => {
+    setDictTerm(word);
+    setDictOpen(true);
+  };
+
+  const openDictionary = () => {
+    setDictTerm(null);
+    setDictOpen(true);
+  };
 
   useEffect(() => {
     setSermon(getSermon(id) ?? null);
