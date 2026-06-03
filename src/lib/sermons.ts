@@ -12,6 +12,7 @@ export interface Sermon {
   baseVerse: string;
   theme: string;
   introduction: string;
+  conclusion: string;
   tags: string[];
   topics: Topic[];
   createdAt: number;
@@ -43,8 +44,9 @@ export function emptySermon(): Sermon {
     baseVerse: "",
     theme: "",
     introduction: "",
+    conclusion: "",
     tags: [],
-    topics: [{ id: uid(), title: "Tópico 1", content: "" }],
+    topics: [{ id: uid(), title: "1. Primeiro ponto", content: "" }],
     createdAt: now,
     updatedAt: now,
   };
@@ -58,6 +60,8 @@ const SEED: Sermon[] = [
     theme: "Uma fé que permanece firme em meio à tempestade",
     introduction:
       "Existem momentos em que tudo ao nosso redor parece balançar. A fé, porém, é a âncora que segura a alma quando o mar revolta. Hoje veremos como ancorar nossa confiança naquilo que não se move.",
+    conclusion:
+      "A tempestade passa, mas a âncora permanece. Não confie no que se move ao seu redor; confie naquele que está além do véu. Lance sua âncora em Cristo hoje e descanse: sua alma está segura.",
     tags: ["Fé", "Esperança"],
     topics: [
       {
@@ -89,6 +93,8 @@ const SEED: Sermon[] = [
     theme: "Princípios para uma família firmada em Deus",
     introduction:
       "Toda família enfrenta ventos e enxurradas. A diferença não está em evitar as crises, mas no alicerce sobre o qual a casa foi construída. Vamos descobrir como edificar sobre a Rocha.",
+    conclusion:
+      "A casa que permanece não é a que nunca enfrentou tempestade, mas a que foi construída sobre a Rocha. Hoje é dia de revisar o fundamento da sua família: ouvir e praticar a Palavra de Cristo, todos os dias.",
     tags: ["Família", "Novo Testamento"],
     topics: [
       {
@@ -120,6 +126,8 @@ const SEED: Sermon[] = [
     theme: "A salvação que ressuscita o que estava morto",
     introduction:
       "Deus levou Ezequiel a um vale cheio de ossos secos e fez uma pergunta impossível: 'Poderão estes ossos viver?'. A resposta revela o poder restaurador da salvação.",
+    conclusion:
+      "Nenhuma situação está seca demais para o sopro de Deus. Onde havia morte, a Palavra e o Espírito trazem vida. Entregue hoje seus ossos secos a Ele e levante-se como parte do grande exército do Senhor.",
     tags: ["Salvação", "Antigo Testamento"],
     topics: [
       {
@@ -146,6 +154,10 @@ const SEED: Sermon[] = [
   },
 ];
 
+function normalize(sermons: Sermon[]): Sermon[] {
+  return sermons.map((s) => ({ ...s, conclusion: s.conclusion ?? "" }));
+}
+
 function load(): Sermon[] {
   if (typeof window === "undefined") return SEED;
   try {
@@ -154,7 +166,7 @@ function load(): Sermon[] {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED));
       return SEED;
     }
-    return JSON.parse(raw) as Sermon[];
+    return normalize(JSON.parse(raw) as Sermon[]);
   } catch {
     return SEED;
   }

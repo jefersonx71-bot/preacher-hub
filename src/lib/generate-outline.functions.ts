@@ -21,21 +21,25 @@ export interface GeneratedOutline {
   baseVerse: string;
   theme: string;
   introduction: string;
+  conclusion: string;
   tags: string[];
   topics: { title: string; content: string }[];
 }
 
 const SYSTEM_PROMPT = `Você é um assistente teológico especializado em homilética que ajuda pregadores a transformar anotações soltas em esboços de pregação claros, organizados e prontos para o púlpito.
 
-A partir do texto fornecido (anotações, rascunho ou pregação completa do pregador), extraia e estruture um esboço inteligente:
+Estruture SEMPRE o esboço no formato clássico de três partes: INTRODUÇÃO → DESENVOLVIMENTO → CONCLUSÃO.
+
+A partir do texto fornecido (anotações, rascunho ou pregação completa do pregador), extraia e estruture:
 - title: um título forte e memorável para a mensagem.
 - baseVerse: o versículo base principal (ex: "Hebreus 6:19"). Se houver vários, escolha o central. Se nenhum for citado, sugira o mais adequado ao tema.
 - theme: uma frase curta resumindo a ideia central.
-- introduction: 2 a 4 frases que abrem a mensagem de forma envolvente.
-- topics: de 2 a 5 tópicos. Cada tópico tem um título numerado (ex: "1. A tempestade é real") e um conteúdo com tópicos em bullets usando "• " e quebras de linha "\\n", incluindo referências bíblicas, ilustrações e aplicações quando possível.
+- introduction (INTRODUÇÃO): 2 a 4 frases que abrem a mensagem de forma envolvente, apresentando o tema e despertando interesse.
+- topics (DESENVOLVIMENTO): de 2 a 5 tópicos que desenvolvem a mensagem. Cada tópico tem um título numerado (ex: "1. A tempestade é real") e um conteúdo com tópicos em bullets usando "• " e quebras de linha "\\n", incluindo referências bíblicas, ilustrações e aplicações quando possível.
+- conclusion (CONCLUSÃO): 2 a 4 frases que recapitulam a ideia central, fecham a mensagem e fazem o apelo ou aplicação final ao ouvinte.
 - tags: 1 a 3 categorias APENAS desta lista: Fé, Família, Salvação, Antigo Testamento, Novo Testamento, Esperança, Oração, Graça.
 
-Responda sempre em português do Brasil. Preserve a intenção e o conteúdo original do pregador, apenas organizando-o melhor. Use a ferramenta save_outline para retornar o resultado.`;
+Responda sempre em português do Brasil. Preserve a intenção e o conteúdo original do pregador, apenas organizando-o melhor nesse formato. Use a ferramenta save_outline para retornar o resultado.`;
 
 export const generateOutline = createServerFn({ method: "POST" })
   .inputValidator(inputSchema)
@@ -70,6 +74,7 @@ export const generateOutline = createServerFn({ method: "POST" })
                   baseVerse: { type: "string" },
                   theme: { type: "string" },
                   introduction: { type: "string" },
+                  conclusion: { type: "string" },
                   tags: {
                     type: "array",
                     items: { type: "string", enum: ALLOWED_TAGS as unknown as string[] },
@@ -87,7 +92,7 @@ export const generateOutline = createServerFn({ method: "POST" })
                     },
                   },
                 },
-                required: ["title", "baseVerse", "theme", "introduction", "tags", "topics"],
+                required: ["title", "baseVerse", "theme", "introduction", "conclusion", "tags", "topics"],
                 additionalProperties: false,
               },
             },
@@ -123,6 +128,7 @@ export const generateOutline = createServerFn({ method: "POST" })
       baseVerse: parsed.baseVerse ?? "",
       theme: parsed.theme ?? "",
       introduction: parsed.introduction ?? "",
+      conclusion: parsed.conclusion ?? "",
       tags: validTags,
       topics: Array.isArray(parsed.topics) ? parsed.topics : [],
     };

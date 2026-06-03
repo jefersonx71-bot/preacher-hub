@@ -207,10 +207,13 @@ function Editor() {
           </Field>
         </div>
 
-        {/* Topics */}
+        {/* Topics / Desenvolvimento */}
         <div>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-display text-xl font-semibold text-foreground">Tópicos</h2>
+            <div>
+              <h2 className="font-display text-xl font-semibold text-foreground">Desenvolvimento</h2>
+              <p className="text-xs text-muted-foreground">Os pontos centrais da mensagem</p>
+            </div>
             <span className="text-xs text-muted-foreground">Arraste para reordenar</span>
           </div>
 
@@ -243,8 +246,21 @@ function Editor() {
             onClick={addTopic}
             className="mt-3 w-full gap-1.5 border-dashed py-5"
           >
-            <Plus className="size-4" /> Adicionar Tópico
+            <Plus className="size-4" /> Adicionar Ponto
           </Button>
+        </div>
+
+        {/* Conclusão */}
+        <div className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-soft">
+          <Field label="Conclusão" htmlFor="sermon-conclusion">
+            <Textarea
+              id="sermon-conclusion"
+              value={sermon.conclusion}
+              onChange={(e) => set({ conclusion: e.target.value })}
+              placeholder="Recapitule a mensagem e faça o apelo/aplicação final..."
+              className="min-h-28"
+            />
+          </Field>
         </div>
       </main>
     </div>
