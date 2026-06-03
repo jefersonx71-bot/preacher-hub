@@ -267,50 +267,6 @@ function Editor() {
   );
 }
 
-        {/* Topics */}
-        <div>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-display text-xl font-semibold text-foreground">Tópicos</h2>
-            <span className="text-xs text-muted-foreground">Arraste para reordenar</span>
-          </div>
-
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={sermon.topics.map((t) => t.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="space-y-3">
-                {sermon.topics.map((topic, index) => (
-                  <SortableTopic
-                    key={topic.id}
-                    topic={topic}
-                    index={index}
-                    onChange={(patch) => updateTopic(topic.id, patch)}
-                    onRemove={() => removeTopic(topic.id)}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
-
-          <Button
-            type="button"
-            variant="outline"
-            onClick={addTopic}
-            className="mt-3 w-full gap-1.5 border-dashed py-5"
-          >
-            <Plus className="size-4" /> Adicionar Tópico
-          </Button>
-        </div>
-      </main>
-    </div>
-  );
-}
-
 function Field({
   label,
   htmlFor,
