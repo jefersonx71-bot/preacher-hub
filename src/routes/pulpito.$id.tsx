@@ -162,9 +162,11 @@ function Pulpit() {
                   )}
                 >
                   <div className="overflow-hidden">
-                    <p className="whitespace-pre-wrap px-5 pb-5 text-lg leading-relaxed text-foreground/90">
-                      {topic.content || "Sem conteúdo detalhado."}
-                    </p>
+                    <ClickableText
+                      text={topic.content || "Sem conteúdo detalhado."}
+                      onWord={studyWord}
+                      className="px-5 pb-5 text-lg leading-relaxed text-foreground/90"
+                    />
                   </div>
                 </div>
               </div>
