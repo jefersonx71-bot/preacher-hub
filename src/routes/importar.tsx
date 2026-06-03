@@ -59,6 +59,7 @@ function ImportPage() {
         baseVerse: outline.baseVerse,
         theme: outline.theme,
         introduction: outline.introduction,
+        conclusion: outline.conclusion,
         tags: outline.tags,
         topics:
           outline.topics.length > 0
