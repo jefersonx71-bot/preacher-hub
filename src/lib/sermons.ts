@@ -12,6 +12,7 @@ export interface Sermon {
   baseVerse: string;
   theme: string;
   introduction: string;
+  conclusion: string;
   tags: string[];
   topics: Topic[];
   createdAt: number;
@@ -43,8 +44,9 @@ export function emptySermon(): Sermon {
     baseVerse: "",
     theme: "",
     introduction: "",
+    conclusion: "",
     tags: [],
-    topics: [{ id: uid(), title: "Tópico 1", content: "" }],
+    topics: [{ id: uid(), title: "1. Primeiro ponto", content: "" }],
     createdAt: now,
     updatedAt: now,
   };
