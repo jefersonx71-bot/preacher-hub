@@ -202,7 +202,13 @@ function Pulpit() {
             Recolher tudo
           </button>
         </div>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          Dica: deu um branco? Toque em qualquer palavra para abrir um mini estudo.
+        </p>
       </main>
+
+      <DictionaryDialog open={dictOpen} term={dictTerm} onOpenChange={setDictOpen} />
     </div>
   );
 }
