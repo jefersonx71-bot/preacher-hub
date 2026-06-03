@@ -74,6 +74,7 @@ export const generateOutline = createServerFn({ method: "POST" })
                   baseVerse: { type: "string" },
                   theme: { type: "string" },
                   introduction: { type: "string" },
+                  conclusion: { type: "string" },
                   tags: {
                     type: "array",
                     items: { type: "string", enum: ALLOWED_TAGS as unknown as string[] },
@@ -91,7 +92,7 @@ export const generateOutline = createServerFn({ method: "POST" })
                     },
                   },
                 },
-                required: ["title", "baseVerse", "theme", "introduction", "tags", "topics"],
+                required: ["title", "baseVerse", "theme", "introduction", "conclusion", "tags", "topics"],
                 additionalProperties: false,
               },
             },
@@ -127,6 +128,7 @@ export const generateOutline = createServerFn({ method: "POST" })
       baseVerse: parsed.baseVerse ?? "",
       theme: parsed.theme ?? "",
       introduction: parsed.introduction ?? "",
+      conclusion: parsed.conclusion ?? "",
       tags: validTags,
       topics: Array.isArray(parsed.topics) ? parsed.topics : [],
     };
