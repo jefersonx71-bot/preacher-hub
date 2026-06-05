@@ -94,6 +94,7 @@ export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogP
     if (!open) {
       setResult(null);
       setError(null);
+      setFromCache(false);
     }
   }, [open, term, run]);
 
