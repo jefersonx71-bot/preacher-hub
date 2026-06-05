@@ -50,6 +50,7 @@ export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogP
   const [result, setResult] = useState<DictionaryEntry | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fromCache, setFromCache] = useState(false);
 
   const run = useCallback(
     async (raw: string) => {
@@ -61,8 +62,19 @@ export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogP
       setLoading(true);
       setError(null);
       setResult(null);
+      setFromCache(false);
+
+      const cached = getCachedEntry(clean);
+      if (cached) {
+        setResult(cached);
+        setFromCache(true);
+        setLoading(false);
+        return;
+      }
+
       try {
         const entry = await lookup({ data: { term: clean } });
+        setCachedEntry(clean, entry);
         setResult(entry);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Erro ao buscar o termo.");
