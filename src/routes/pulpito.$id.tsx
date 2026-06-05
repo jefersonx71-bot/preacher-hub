@@ -37,6 +37,8 @@ function Pulpit() {
   const [open, setOpen] = useState<Set<string>>(new Set());
   const [dictOpen, setDictOpen] = useState(false);
   const [dictTerm, setDictTerm] = useState<string | null>(null);
+  const [enrichOpen, setEnrichOpen] = useState(false);
+  const [enrichTopicState, setEnrichTopicState] = useState<Topic | null>(null);
 
   const studyWord = (word: string) => {
     setDictTerm(word);
@@ -46,6 +48,11 @@ function Pulpit() {
   const openDictionary = () => {
     setDictTerm(null);
     setDictOpen(true);
+  };
+
+  const openEnrich = (topic: Topic) => {
+    setEnrichTopicState(topic);
+    setEnrichOpen(true);
   };
 
   useEffect(() => {
