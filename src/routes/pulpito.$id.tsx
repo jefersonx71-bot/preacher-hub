@@ -147,22 +147,33 @@ function Pulpit() {
                   isOpen ? "border-gold/50" : "border-border",
                 )}
               >
-                <button
-                  type="button"
-                  onClick={() => toggle(topic.id)}
-                  aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
-                >
-                  <span className="font-display text-xl font-semibold leading-snug text-foreground sm:text-2xl">
-                    {topic.title}
-                  </span>
-                  <ChevronDown
-                    className={cn(
-                      "size-6 shrink-0 text-gold transition-transform duration-300",
-                      isOpen && "rotate-180",
-                    )}
-                  />
-                </button>
+                <div className="flex items-center gap-1 pr-3">
+                  <button
+                    type="button"
+                    onClick={() => toggle(topic.id)}
+                    aria-expanded={isOpen}
+                    className="flex flex-1 items-center justify-between gap-3 px-5 py-4 text-left"
+                  >
+                    <span className="font-display text-xl font-semibold leading-snug text-foreground sm:text-2xl">
+                      {topic.title}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "size-6 shrink-0 text-gold transition-transform duration-300",
+                        isOpen && "rotate-180",
+                      )}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openEnrich(topic)}
+                    aria-label="Enriquecer tópico com ilustrações, exemplos e referências"
+                    title="Enriquecer: ilustrações, exemplos e referências"
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full border border-gold/40 text-gold transition-colors hover:bg-gold/15"
+                  >
+                    <Sparkles className="size-4" />
+                  </button>
+                </div>
                 <div
                   className={cn(
                     "grid transition-all duration-300 ease-in-out",
