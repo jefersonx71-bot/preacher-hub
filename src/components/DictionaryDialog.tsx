@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { BookOpen, Loader2, Search, Sparkles } from "lucide-react";
+import { BookOpen, Loader2, Search, Sparkles, WifiOff } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,12 +18,39 @@ interface DictionaryDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const CACHE_KEY = "pregadynamic-dictionary-cache";
+
+function getCache(): Record<string, DictionaryEntry> {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, DictionaryEntry>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function getCachedEntry(term: string): DictionaryEntry | null {
+  const cache = getCache();
+  return cache[term.toLowerCase().trim()] ?? null;
+}
+
+function setCachedEntry(term: string, entry: DictionaryEntry) {
+  const cache = getCache();
+  cache[term.toLowerCase().trim()] = entry;
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  } catch {
+    // ignore storage full
+  }
+}
+
 export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogProps) {
   const lookup = useServerFn(lookupTerm);
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<DictionaryEntry | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fromCache, setFromCache] = useState(false);
 
   const run = useCallback(
     async (raw: string) => {
@@ -35,8 +62,19 @@ export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogP
       setLoading(true);
       setError(null);
       setResult(null);
+      setFromCache(false);
+
+      const cached = getCachedEntry(clean);
+      if (cached) {
+        setResult(cached);
+        setFromCache(true);
+        setLoading(false);
+        return;
+      }
+
       try {
         const entry = await lookup({ data: { term: clean } });
+        setCachedEntry(clean, entry);
         setResult(entry);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Erro ao buscar o termo.");
@@ -56,6 +94,7 @@ export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogP
     if (!open) {
       setResult(null);
       setError(null);
+      setFromCache(false);
     }
   }, [open, term, run]);
 
@@ -104,6 +143,12 @@ export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogP
 
         {result && !loading && (
           <article className="space-y-4">
+            {fromCache && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <WifiOff className="size-3" />
+                Disponível offline — salvo localmente
+              </div>
+            )}
             <div>
               <h3 className="font-display text-2xl font-semibold text-foreground">{result.term}</h3>
               {result.meaning && (
