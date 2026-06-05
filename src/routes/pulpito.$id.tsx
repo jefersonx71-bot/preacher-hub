@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, BookText, ChevronDown } from "lucide-react";
-import { getSermon, type Sermon } from "@/lib/sermons";
+import { ArrowLeft, BookOpen, BookText, ChevronDown, Sparkles } from "lucide-react";
+import { getSermon, type Sermon, type Topic } from "@/lib/sermons";
 import { PulpitTimer } from "@/components/PulpitTimer";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ClickableText } from "@/components/ClickableText";
 import { DictionaryDialog } from "@/components/DictionaryDialog";
+import { EnrichDialog } from "@/components/EnrichDialog";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/pulpito/$id")({
@@ -36,6 +37,8 @@ function Pulpit() {
   const [open, setOpen] = useState<Set<string>>(new Set());
   const [dictOpen, setDictOpen] = useState(false);
   const [dictTerm, setDictTerm] = useState<string | null>(null);
+  const [enrichOpen, setEnrichOpen] = useState(false);
+  const [enrichTopicState, setEnrichTopicState] = useState<Topic | null>(null);
 
   const studyWord = (word: string) => {
     setDictTerm(word);
@@ -45,6 +48,11 @@ function Pulpit() {
   const openDictionary = () => {
     setDictTerm(null);
     setDictOpen(true);
+  };
+
+  const openEnrich = (topic: Topic) => {
+    setEnrichTopicState(topic);
+    setEnrichOpen(true);
   };
 
   useEffect(() => {
@@ -139,22 +147,33 @@ function Pulpit() {
                   isOpen ? "border-gold/50" : "border-border",
                 )}
               >
-                <button
-                  type="button"
-                  onClick={() => toggle(topic.id)}
-                  aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
-                >
-                  <span className="font-display text-xl font-semibold leading-snug text-foreground sm:text-2xl">
-                    {topic.title}
-                  </span>
-                  <ChevronDown
-                    className={cn(
-                      "size-6 shrink-0 text-gold transition-transform duration-300",
-                      isOpen && "rotate-180",
-                    )}
-                  />
-                </button>
+                <div className="flex items-center gap-1 pr-3">
+                  <button
+                    type="button"
+                    onClick={() => toggle(topic.id)}
+                    aria-expanded={isOpen}
+                    className="flex flex-1 items-center justify-between gap-3 px-5 py-4 text-left"
+                  >
+                    <span className="font-display text-xl font-semibold leading-snug text-foreground sm:text-2xl">
+                      {topic.title}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "size-6 shrink-0 text-gold transition-transform duration-300",
+                        isOpen && "rotate-180",
+                      )}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openEnrich(topic)}
+                    aria-label="Enriquecer tópico com ilustrações, exemplos e referências"
+                    title="Enriquecer: ilustrações, exemplos e referências"
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full border border-gold/40 text-gold transition-colors hover:bg-gold/15"
+                  >
+                    <Sparkles className="size-4" />
+                  </button>
+                </div>
                 <div
                   className={cn(
                     "grid transition-all duration-300 ease-in-out",
@@ -209,6 +228,12 @@ function Pulpit() {
       </main>
 
       <DictionaryDialog open={dictOpen} term={dictTerm} onOpenChange={setDictOpen} />
+      <EnrichDialog
+        open={enrichOpen}
+        sermon={sermon}
+        topic={enrichTopicState}
+        onOpenChange={setEnrichOpen}
+      />
     </div>
   );
 }
