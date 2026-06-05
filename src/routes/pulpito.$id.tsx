@@ -228,6 +228,12 @@ function Pulpit() {
       </main>
 
       <DictionaryDialog open={dictOpen} term={dictTerm} onOpenChange={setDictOpen} />
+      <EnrichDialog
+        open={enrichOpen}
+        sermon={sermon}
+        topic={enrichTopicState}
+        onOpenChange={setEnrichOpen}
+      />
     </div>
   );
 }
