@@ -143,6 +143,12 @@ export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogP
 
         {result && !loading && (
           <article className="space-y-4">
+            {fromCache && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <WifiOff className="size-3" />
+                Disponível offline — salvo localmente
+              </div>
+            )}
             <div>
               <h3 className="font-display text-2xl font-semibold text-foreground">{result.term}</h3>
               {result.meaning && (
