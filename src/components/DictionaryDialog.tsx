@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { BookOpen, Loader2, Search, Sparkles } from "lucide-react";
+import { BookOpen, Loader2, Search, Sparkles, WifiOff } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,32 @@ interface DictionaryDialogProps {
   open: boolean;
   term: string | null;
   onOpenChange: (open: boolean) => void;
+}
+
+const CACHE_KEY = "pregadynamic-dictionary-cache";
+
+function getCache(): Record<string, DictionaryEntry> {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, DictionaryEntry>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function getCachedEntry(term: string): DictionaryEntry | null {
+  const cache = getCache();
+  return cache[term.toLowerCase().trim()] ?? null;
+}
+
+function setCachedEntry(term: string, entry: DictionaryEntry) {
+  const cache = getCache();
+  cache[term.toLowerCase().trim()] = entry;
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  } catch {
+    // ignore storage full
+  }
 }
 
 export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogProps) {
