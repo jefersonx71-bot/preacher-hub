@@ -11,12 +11,18 @@ function cleanWord(token: string) {
   return token.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
 }
 
+// Converts literal escape sequences (e.g. "\n" written as two chars) into
+// real line breaks so older saved content renders cleanly.
+function normalize(text: string) {
+  return text.replace(/\\r\\n|\\n|\\r/g, "\n");
+}
+
 /**
  * Renders text where every word is tappable to open a dictionary mini study.
  * Whitespace (including line breaks) is preserved via whitespace-pre-wrap.
  */
 export function ClickableText({ text, onWord, className }: ClickableTextProps) {
-  const tokens = text.split(/(\s+)/);
+  const tokens = normalize(text).split(/(\s+)/);
 
   return (
     <p className={cn("whitespace-pre-wrap", className)}>
