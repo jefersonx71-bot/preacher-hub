@@ -35,7 +35,7 @@ A partir do texto fornecido (anotações, rascunho ou pregação completa do pre
 - baseVerse: o versículo base principal (ex: "Hebreus 6:19"). Se houver vários, escolha o central. Se nenhum for citado, sugira o mais adequado ao tema.
 - theme: uma frase curta resumindo a ideia central.
 - introduction (INTRODUÇÃO): 2 a 4 frases que abrem a mensagem de forma envolvente, apresentando o tema e despertando interesse.
-- topics (DESENVOLVIMENTO): de 2 a 5 tópicos que desenvolvem a mensagem. Cada tópico tem um título numerado (ex: "1. A tempestade é real") e um conteúdo com tópicos em bullets usando "• " e quebras de linha "\\n", incluindo referências bíblicas, ilustrações e aplicações quando possível.
+- topics (DESENVOLVIMENTO): de 2 a 5 tópicos que desenvolvem a mensagem. Cada tópico tem um título numerado (ex: "1. A tempestade é real") e um conteúdo com tópicos em bullets começando cada item com "• " e SEPARANDO cada item com uma quebra de linha real (Enter), nunca escrevendo a sequência de caracteres "\\n". Inclua referências bíblicas, ilustrações e aplicações quando possível.
 - conclusion (CONCLUSÃO): 2 a 4 frases que recapitulam a ideia central, fecham a mensagem e fazem o apelo ou aplicação final ao ouvinte.
 - tags: 1 a 3 categorias APENAS desta lista: Fé, Família, Salvação, Antigo Testamento, Novo Testamento, Esperança, Oração, Graça.
 
