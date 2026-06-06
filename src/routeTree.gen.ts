@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ImportarRouteImport } from './routes/importar'
+import { Route as BibliaRouteImport } from './routes/biblia'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PulpitoIdRouteImport } from './routes/pulpito.$id'
 import { Route as EditorIdRouteImport } from './routes/editor.$id'
@@ -23,6 +24,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ImportarRoute = ImportarRouteImport.update({
   id: '/importar',
   path: '/importar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BibliaRoute = BibliaRouteImport.update({
+  id: '/biblia',
+  path: '/biblia',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -43,6 +49,7 @@ const EditorIdRoute = EditorIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/biblia': typeof BibliaRoute
   '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/editor/$id': typeof EditorIdRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/biblia': typeof BibliaRoute
   '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/editor/$id': typeof EditorIdRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/biblia': typeof BibliaRoute
   '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/editor/$id': typeof EditorIdRoute
@@ -65,12 +74,25 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/importar' | '/sitemap.xml' | '/editor/$id' | '/pulpito/$id'
+  fullPaths:
+    | '/'
+    | '/biblia'
+    | '/importar'
+    | '/sitemap.xml'
+    | '/editor/$id'
+    | '/pulpito/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/importar' | '/sitemap.xml' | '/editor/$id' | '/pulpito/$id'
+  to:
+    | '/'
+    | '/biblia'
+    | '/importar'
+    | '/sitemap.xml'
+    | '/editor/$id'
+    | '/pulpito/$id'
   id:
     | '__root__'
     | '/'
+    | '/biblia'
     | '/importar'
     | '/sitemap.xml'
     | '/editor/$id'
@@ -79,6 +101,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BibliaRoute: typeof BibliaRoute
   ImportarRoute: typeof ImportarRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   EditorIdRoute: typeof EditorIdRoute
@@ -99,6 +122,13 @@ declare module '@tanstack/react-router' {
       path: '/importar'
       fullPath: '/importar'
       preLoaderRoute: typeof ImportarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/biblia': {
+      id: '/biblia'
+      path: '/biblia'
+      fullPath: '/biblia'
+      preLoaderRoute: typeof BibliaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -127,6 +157,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BibliaRoute: BibliaRoute,
   ImportarRoute: ImportarRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   EditorIdRoute: EditorIdRoute,
@@ -135,3 +166,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
