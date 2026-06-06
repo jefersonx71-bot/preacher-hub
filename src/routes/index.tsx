@@ -98,6 +98,24 @@ function Dashboard() {
           </span>
         </Link>
 
+        {/* Bible study link */}
+        <Link
+          to="/biblia"
+          className="mt-3 flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-secondary"
+        >
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <BookOpen className="size-5" />
+          </span>
+          <span className="min-w-0">
+            <span className="block font-display text-base font-semibold text-foreground">
+              Bíblia para estudo
+            </span>
+            <span className="block text-sm text-muted-foreground">
+              Leia em várias versões lado a lado, versículo a versículo
+            </span>
+          </span>
+        </Link>
+
         {/* Tag filters */}
         {tags.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
