@@ -101,6 +101,16 @@ function Pulpit() {
           >
             <BookText className="size-5" />
           </button>
+          <a
+            href="/biblia"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Abrir Bíblia em nova aba"
+            title="Bíblia para estudo"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-gold"
+          >
+            <BookOpen className="size-5" />
+          </a>
           <ThemeToggle />
         </div>
       </header>
