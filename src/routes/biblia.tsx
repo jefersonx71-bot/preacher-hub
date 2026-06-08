@@ -31,13 +31,13 @@ export const Route = createFileRoute("/biblia")({
       {
         name: "description",
         content:
-          "Leia a Bíblia em várias versões lado a lado (Almeida, inglês e latim) para estudo e comparação versículo a versículo.",
+          "Leia a Bíblia em várias versões em português lado a lado (NVI, ACF e Almeida Atualizada) para estudo e comparação versículo a versículo.",
       },
       { property: "og:title", content: "Bíblia para Estudo — PregaDynamic" },
       {
         property: "og:description",
         content:
-          "Compare a Bíblia em vários idiomas lado a lado, versículo a versículo, para enriquecer seu estudo.",
+          "Compare versões da Bíblia em português lado a lado, versículo a versículo, para enriquecer seu estudo e seus sermões.",
       },
       { property: "og:url", content: "/biblia" },
     ],
@@ -46,17 +46,23 @@ export const Route = createFileRoute("/biblia")({
   component: BiblePage,
 });
 
+const DEFAULT_VERSIONS = ["nvi", "acf"];
+const VALID_IDS = new Set(BIBLE_VERSIONS.map((v) => v.id));
+
 function loadVersions(): string[] {
   try {
     const raw = localStorage.getItem(VERSIONS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as string[];
-      if (Array.isArray(parsed) && parsed.length) return parsed;
+      const valid = Array.isArray(parsed)
+        ? parsed.filter((id) => VALID_IDS.has(id))
+        : [];
+      if (valid.length) return valid.slice(0, 4);
     }
   } catch {
     // ignore
   }
-  return ["almeida", "kjv"];
+  return DEFAULT_VERSIONS;
 }
 
 function BiblePage() {
@@ -64,7 +70,7 @@ function BiblePage() {
   const [bookIdx, setBookIdx] = useState(42); // João
   const [chapter, setChapter] = useState(3);
   const [versions, setVersions] = useState<string[]>(() =>
-    typeof window === "undefined" ? ["almeida", "kjv"] : loadVersions(),
+    typeof window === "undefined" ? DEFAULT_VERSIONS : loadVersions(),
   );
 
   const book: BibleBook = BIBLE_BOOKS[bookIdx];
@@ -89,9 +95,9 @@ function BiblePage() {
   };
 
   const { data, isFetching, isError, error, refetch } = useQuery({
-    queryKey: ["bible", book.query, chapter, versions.join(",")],
+    queryKey: ["bible", bookIdx, chapter, versions.join(",")],
     queryFn: () =>
-      fetchFn({ data: { book: book.query, chapter, translations: versions } }),
+      fetchFn({ data: { bookIndex: bookIdx, chapter, translations: versions } }),
     staleTime: 1000 * 60 * 60,
   });
 
@@ -198,7 +204,7 @@ function BiblePage() {
         {/* Version selector */}
         <div className="mt-4">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-            Versões para comparar (até 4)
+            Versões em português para comparar (até 4)
           </p>
           <div className="flex flex-wrap gap-2">
             {BIBLE_VERSIONS.map((v) => {
@@ -216,7 +222,7 @@ function BiblePage() {
                   )}
                 >
                   {v.label}
-                  <span className="ml-1.5 text-xs opacity-70">{v.language}</span>
+                  <span className="ml-1.5 text-xs opacity-70">{v.fullName}</span>
                 </button>
               );
             })}
@@ -241,7 +247,7 @@ function BiblePage() {
                 className="text-xs font-semibold uppercase tracking-wide text-gold"
               >
                 {versionById(id)?.label}{" "}
-                <span className="text-muted-foreground">{versionById(id)?.language}</span>
+                <span className="text-muted-foreground">{versionById(id)?.fullName}</span>
               </span>
             ))}
           </div>
@@ -299,7 +305,7 @@ function BiblePage() {
         )}
 
         <p className="mt-10 text-center text-xs text-muted-foreground">
-          Textos de domínio público via bible-api.com.
+          Textos bíblicos em português para estudo e comparação.
         </p>
       </main>
     </div>

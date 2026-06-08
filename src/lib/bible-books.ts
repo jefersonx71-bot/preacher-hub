@@ -82,17 +82,19 @@ export interface BibleVersion {
   id: string;
   /** Short label shown in the column header */
   label: string;
-  /** Language description */
-  language: string;
+  /** Full name of the translation */
+  fullName: string;
 }
 
-/** Versions available on bible-api.com (public domain). */
+/**
+ * Portuguese Bible versions available for study.
+ * To add a new version later, append an entry here whose `id` matches a
+ * dataset slug supported by the fetch layer (see bible.functions.ts).
+ */
 export const BIBLE_VERSIONS: BibleVersion[] = [
-  { id: "almeida", label: "Almeida", language: "Português" },
-  { id: "kjv", label: "King James", language: "Inglês" },
-  { id: "web", label: "World English", language: "Inglês" },
-  { id: "clementine", label: "Vulgata", language: "Latim" },
-  { id: "bbe", label: "Basic English", language: "Inglês" },
+  { id: "nvi", label: "NVI", fullName: "Nova Versão Internacional" },
+  { id: "acf", label: "ACF", fullName: "Almeida Corrigida Fiel" },
+  { id: "aa", label: "AA", fullName: "Almeida Revista e Atualizada" },
 ];
 
 export function versionById(id: string): BibleVersion | undefined {
