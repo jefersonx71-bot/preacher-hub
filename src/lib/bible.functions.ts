@@ -2,46 +2,47 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const inputSchema = z.object({
-  // English book name as used by bible-api.com (e.g. "John", "1 Corinthians")
-  book: z.string().trim().min(2).max(40),
+  // Canonical book index 0-65 (matches BIBLE_BOOKS order)
+  bookIndex: z.number().int().min(0).max(65),
   chapter: z.number().int().min(1).max(150),
-  // List of translation ids to fetch in parallel
+  // List of version ids (dataset slugs) to fetch in parallel
   translations: z.array(z.string().trim().min(2).max(20)).min(1).max(5),
 });
 
 export interface ParallelVerse {
   verse: number;
-  /** translationId -> verse text */
+  /** versionId -> verse text */
   texts: Record<string, string>;
 }
 
 export interface BibleChapterResult {
-  /** Reference in the first translation's language (e.g. "João 3") */
-  reference: string;
   translations: string[];
   verses: ParallelVerse[];
 }
 
-interface ApiVerse {
-  verse: number;
-  text: string;
-}
-interface ApiResponse {
-  reference?: string;
-  verses?: ApiVerse[];
+interface DatasetBook {
+  abbrev: string;
+  name: string;
+  chapters: string[][];
 }
 
-async function fetchTranslation(
-  book: string,
-  chapter: number,
-  translation: string,
-): Promise<ApiResponse | null> {
-  const ref = encodeURIComponent(`${book} ${chapter}`);
-  const url = `https://bible-api.com/${ref}?translation=${encodeURIComponent(translation)}`;
+// In-memory cache per worker isolate (datasets are ~4MB each, fetched once).
+const datasetCache = new Map<string, DatasetBook[]>();
+
+async function loadDataset(slug: string): Promise<DatasetBook[] | null> {
+  const cached = datasetCache.get(slug);
+  if (cached) return cached;
+  const url = `https://cdn.jsdelivr.net/gh/thiagobodruk/biblia@master/json/${encodeURIComponent(slug)}.json`;
   try {
     const res = await fetch(url);
     if (!res.ok) return null;
-    return (await res.json()) as ApiResponse;
+    let text = await res.text();
+    // Strip UTF-8 BOM if present
+    if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+    const data = JSON.parse(text) as DatasetBook[];
+    if (!Array.isArray(data) || data.length !== 66) return null;
+    datasetCache.set(slug, data);
+    return data;
   } catch {
     return null;
   }
@@ -50,23 +51,24 @@ async function fetchTranslation(
 export const fetchChapter = createServerFn({ method: "POST" })
   .inputValidator(inputSchema)
   .handler(async ({ data }): Promise<BibleChapterResult> => {
-    const results = await Promise.all(
-      data.translations.map((t) => fetchTranslation(data.book, data.chapter, t)),
+    const datasets = await Promise.all(
+      data.translations.map((t) => loadDataset(t)),
     );
 
-    // Map: verseNumber -> { translationId: text }
+    // Map: verseNumber -> { versionId: text }
     const byVerse = new Map<number, Record<string, string>>();
-    let reference = `${data.book} ${data.chapter}`;
 
     data.translations.forEach((translation, idx) => {
-      const res = results[idx];
-      if (!res?.verses) return;
-      if (idx === 0 && res.reference) reference = res.reference;
-      for (const v of res.verses) {
-        const entry = byVerse.get(v.verse) ?? {};
-        entry[translation] = (v.text ?? "").replace(/\s+/g, " ").trim();
-        byVerse.set(v.verse, entry);
-      }
+      const ds = datasets[idx];
+      const book = ds?.[data.bookIndex];
+      const verses = book?.chapters?.[data.chapter - 1];
+      if (!verses) return;
+      verses.forEach((text, vi) => {
+        const verse = vi + 1;
+        const entry = byVerse.get(verse) ?? {};
+        entry[translation] = (text ?? "").replace(/\s+/g, " ").trim();
+        byVerse.set(verse, entry);
+      });
     });
 
     if (byVerse.size === 0) {
@@ -77,5 +79,5 @@ export const fetchChapter = createServerFn({ method: "POST" })
       .sort((a, b) => a[0] - b[0])
       .map(([verse, texts]) => ({ verse, texts }));
 
-    return { reference, translations: data.translations, verses };
+    return { translations: data.translations, verses };
   });
