@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { Link } from "@tanstack/react-router";
 import { BookOpen, Lightbulb, Loader2, RefreshCw, Sparkles, Users, WifiOff } from "lucide-react";
+import { parseBibleReference } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -187,15 +189,31 @@ export function EnrichDialog({ open, sermon, topic, onOpenChange }: EnrichDialog
                   <BookOpen className="size-3.5" /> Referências
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {result.references.map((ref) => (
-                    <span
-                      key={ref}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-gold/12 px-3 py-1 text-xs font-semibold text-gold"
-                    >
-                      <BookOpen className="size-3" />
-                      {ref}
-                    </span>
-                  ))}
+                  {result.references.map((ref) => {
+                    const parsed = parseBibleReference(ref);
+                    if (parsed) {
+                      return (
+                        <Link
+                          key={ref}
+                          to="/biblia"
+                          search={{ book: parsed.book, chapter: parsed.chapter }}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-gold/12 px-3 py-1 text-xs font-semibold text-gold transition-colors hover:bg-gold/20 active:scale-95"
+                        >
+                          <BookOpen className="size-3" />
+                          {ref}
+                        </Link>
+                      );
+                    }
+                    return (
+                      <span
+                        key={ref}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-gold/12 px-3 py-1 text-xs font-semibold text-gold"
+                      >
+                        <BookOpen className="size-3" />
+                        {ref}
+                      </span>
+                    );
+                  })}
                 </div>
               </section>
             )}

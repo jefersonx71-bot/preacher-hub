@@ -30,7 +30,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { sermons } = useSermons();
+  const { sermons, deleteSermon } = useSermons();
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
@@ -83,9 +83,9 @@ function Dashboard() {
         {/* AI import banner */}
         <Link
           to="/importar"
-          className="mt-4 flex items-center gap-3 rounded-xl border border-gold/30 bg-gold/10 p-4 transition-colors hover:bg-gold/15"
+          className="mt-4 flex items-center gap-3 rounded-xl border border-gold/20 bg-card p-4 transition-colors hover:bg-secondary/35 hover:border-gold/30"
         >
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gold/20 text-gold">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gold/10 border border-gold/20 text-gold">
             <Wand2 className="size-5" />
           </span>
           <span className="min-w-0">
@@ -101,9 +101,9 @@ function Dashboard() {
         {/* Bible study link */}
         <Link
           to="/biblia"
-          className="mt-3 flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-secondary"
+          className="mt-3 flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-secondary/35"
         >
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 text-primary">
             <BookOpen className="size-5" />
           </span>
           <span className="min-w-0">
@@ -137,7 +137,7 @@ function Dashboard() {
         </h2>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
           {filtered.map((sermon) => (
-            <SermonCard key={sermon.id} sermon={sermon} />
+            <SermonCard key={sermon.id} sermon={sermon} onDelete={deleteSermon} />
           ))}
         </div>
 

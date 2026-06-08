@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, BookText, ChevronDown, Sparkles } from "lucide-react";
-import { getSermon, type Sermon, type Topic } from "@/lib/sermons";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowLeft, BookOpen, BookText, ChevronDown, Loader2, Plus, Sparkles, X } from "lucide-react";
+import { getSermon, useSermons, type Sermon, type Topic } from "@/lib/sermons";
+import { expandTopicContent } from "@/lib/enrich.functions";
 import { PulpitTimer } from "@/components/PulpitTimer";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ClickableText } from "@/components/ClickableText";
@@ -33,12 +35,69 @@ export const Route = createFileRoute("/pulpito/$id")({
 
 function Pulpit() {
   const { id } = Route.useParams();
+  const { saveSermon } = useSermons();
+  const expand = useServerFn(expandTopicContent);
+
   const [sermon, setSermon] = useState<Sermon | null | undefined>(undefined);
   const [open, setOpen] = useState<Set<string>>(new Set());
   const [dictOpen, setDictOpen] = useState(false);
   const [dictTerm, setDictTerm] = useState<string | null>(null);
   const [enrichOpen, setEnrichOpen] = useState(false);
   const [enrichTopicState, setEnrichTopicState] = useState<Topic | null>(null);
+  const [expandingId, setExpandingId] = useState<string | null>(null);
+
+  const handleExpandTopic = async (topicId: string) => {
+    if (!sermon) return;
+    const topicToExpand = sermon.topics.find((t) => t.id === topicId);
+    if (!topicToExpand) return;
+
+    setExpandingId(topicId);
+    try {
+      const result = await expand({
+        data: {
+          topicTitle: topicToExpand.title,
+          currentContent: topicToExpand.content || "",
+          theme: sermon.theme,
+          baseVerse: sermon.baseVerse,
+        },
+      });
+
+      const updatedTopics = sermon.topics.map((t) =>
+        t.id === topicId ? { ...t, content: result.expandedContent } : t
+      );
+      const updatedSermon = { ...sermon, topics: updatedTopics };
+      setSermon(updatedSermon);
+      saveSermon(updatedSermon);
+
+      // Auto abre o tópico para mostrar a riqueza gerada
+      setOpen((prev) => {
+        const next = new Set(prev);
+        next.add(topicId);
+        return next;
+      });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setExpandingId(null);
+    }
+  };
+
+  const handleDeleteLine = (topicId: string, lineIndex: number) => {
+    if (!sermon) return;
+    const targetTopic = sermon.topics.find((t) => t.id === topicId);
+    if (!targetTopic) return;
+
+    const lines = (targetTopic.content || "").split("\n").map(l => l.trim()).filter(Boolean);
+    const updatedLines = lines.filter((_, i) => i !== lineIndex);
+    const newContent = updatedLines.join("\n");
+
+    const updatedTopics = sermon.topics.map((t) =>
+      t.id === topicId ? { ...t, content: newContent } : t
+    );
+    const updatedSermon = { ...sermon, topics: updatedTopics };
+    setSermon(updatedSermon);
+    saveSermon(updatedSermon);
+  };
 
   const studyWord = (word: string) => {
     setDictTerm(word);
@@ -176,6 +235,20 @@ function Pulpit() {
                   </button>
                   <button
                     type="button"
+                    onClick={() => handleExpandTopic(topic.id)}
+                    disabled={expandingId === topic.id}
+                    aria-label="Aumentar e melhorar o conteúdo deste tópico"
+                    title="Aumentar/Melhorar conteúdo"
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full border border-gold/40 text-gold transition-colors hover:bg-gold/15 disabled:opacity-50"
+                  >
+                    {expandingId === topic.id ? (
+                      <Loader2 className="size-4 animate-spin text-gold" />
+                    ) : (
+                      <Plus className="size-4" />
+                    )}
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => openEnrich(topic)}
                     aria-label="Enriquecer tópico com ilustrações, exemplos e referências"
                     title="Enriquecer: ilustrações, exemplos e referências"
@@ -184,18 +257,53 @@ function Pulpit() {
                     <Sparkles className="size-4" />
                   </button>
                 </div>
-                <div
+                 <div
                   className={cn(
                     "grid transition-all duration-300 ease-in-out",
                     isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
                   )}
                 >
-                  <div className="overflow-hidden">
-                    <ClickableText
-                      text={topic.content || "Sem conteúdo detalhado."}
-                      onWord={studyWord}
-                      className="px-5 pb-5 text-lg leading-relaxed text-foreground/90"
-                    />
+                  <div className="overflow-hidden px-5 pb-5 pt-1">
+                    {(() => {
+                      const content = topic.content || "Sem conteúdo detalhado.";
+                      const lines = content.split("\n").map(l => l.trim()).filter(Boolean);
+                      
+                      if (lines.length === 0 || content === "Sem conteúdo detalhado.") {
+                        return (
+                          <p className="text-lg leading-relaxed text-foreground/50 italic">
+                            Sem conteúdo detalhado.
+                          </p>
+                        );
+                      }
+                      
+                      return (
+                        <ul className="space-y-3">
+                          {lines.map((line, index) => (
+                            <li
+                              key={index}
+                              className="group flex items-start justify-between gap-3 rounded-xl p-2 transition-colors hover:bg-secondary/25"
+                            >
+                              <div className="flex-1">
+                                <ClickableText
+                                  text={line}
+                                  onWord={studyWord}
+                                  className="text-lg leading-relaxed text-foreground/90"
+                                />
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteLine(topic.id, index)}
+                                aria-label="Apagar este item"
+                                title="Apagar item"
+                                className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all hover:bg-destructive/20 hover:text-destructive sm:opacity-0 group-hover:opacity-100"
+                              >
+                                <X className="size-4.5" />
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>

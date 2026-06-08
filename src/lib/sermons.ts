@@ -54,37 +54,70 @@ export function emptySermon(): Sermon {
 
 const SEED: Sermon[] = [
   {
-    id: "seed-fe",
-    title: "A Âncora da Alma",
-    baseVerse: "Hebreus 6:19",
-    theme: "Uma fé que permanece firme em meio à tempestade",
+    id: "seed-vento",
+    title: "Quando o Vento Contrário Abre o Caminho",
+    baseVerse: "Êxodo 14:21",
+    theme: "O vento que parece um problema é a ferramenta do milagre.",
     introduction:
-      "Existem momentos em que tudo ao nosso redor parece balançar. A fé, porém, é a âncora que segura a alma quando o mar revolta. Hoje veremos como ancorar nossa confiança naquilo que não se move.",
+      "Muitas vezes clamamos a Deus por um caminho livre, mas Ele permite o vento contrário. Hoje aprenderemos que o vento forte não vem para nos destruir, mas para abrir o caminho que nos levará ao outro lado.",
     conclusion:
-      "A tempestade passa, mas a âncora permanece. Não confie no que se move ao seu redor; confie naquele que está além do véu. Lance sua âncora em Cristo hoje e descanse: sua alma está segura.",
-    tags: ["Fé", "Esperança"],
+      "O mar se abre não apesar do vento, mas por causa dele. Confie no Senhor no meio da noite escura e sob o vento forte, pois o seu milagre está sendo preparado no meio do sopro da tempestade.",
+    tags: ["Fé", "Antigo Testamento", "Esperança"],
     topics: [
       {
-        id: "t1",
-        title: "1. A tempestade é real",
+        id: "v1",
+        title: "1. O vento contrário é parte do plano",
         content:
-          "• Reconhecer a dor não é falta de fé.\n• Os discípulos no barco (Marcos 4:37-38).\n• Ilustração: o navegador não nega a tempestade, ele confia na âncora.",
+          "• Deus enviou o vento forte e oriental durante toda a noite (Êx 14:21).\n• O vento que incomoda é o mesmo que trabalha a nosso favor.\n• Versículo de apoio: Romanos 8:28.",
       },
       {
-        id: "t2",
-        title: "2. A âncora é firme e segura",
+        id: "v2",
+        title: "2. O vento que afasta a água",
         content:
-          "• A esperança como âncora 'firme e segura' (Hb 6:19).\n• Ela penetra além do véu — está presa em Cristo, não nas circunstâncias.\n• Versículo de apoio: Salmos 62:6.",
+          "• O vento dividiu as águas e secou o leito do mar.\n• O que parecia uma barreira intransponível torna-se terra seca.\n• Ilustração: o que parecia atrasar sua vida é o que está preparando o seu solo.",
       },
       {
-        id: "t3",
-        title: "3. Lançar a âncora todos os dias",
+        id: "v3",
+        title: "3. Avançar no meio da noite",
         content:
-          "• Decisão diária de confiar.\n• Oração + Palavra como o ato de lançar a âncora.\n• Apelo: onde você está ancorado hoje?",
+          "• Os filhos de Israel entraram pelo meio do mar em seco.\n• O milagre exige o passo de fé sob o barulho do vento.\n• Apelo: você está disposto a marchar sob o vento contrário?",
       },
     ],
-    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 6,
-    updatedAt: Date.now() - 1000 * 60 * 60 * 24 * 6,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  },
+  {
+    id: "seed-salvacao",
+    title: "Do Vale dos Ossos Secos à Vida",
+    baseVerse: "Ezequiel 37:1-10",
+    theme: "A salvação que ressuscita o que estava morto",
+    introduction:
+      "Deus levou Ezequiel a um vale cheio de ossos secos e fez uma pergunta impossível: 'Poderão estes ossos viver?'. A resposta revela o poder restaurador da salvação.",
+    conclusion:
+      "Nenhuma situação está seca demais para o sopro de Deus. Onde havia morte, a Palavra e o Espírito trazem vida. Entregue hoje seus ossos secos a Ele e levante-se como parte do grande exército do Senhor.",
+    tags: ["Salvação", "Antigo Testamento"],
+    topics: [
+      {
+        id: "s1",
+        title: "1. O diagnóstico: ossos muito secos",
+        content:
+          "• A condition humana sem Deus (v.2).\n• Não havia vida, nem movimento, nem esperança natural.",
+      },
+      {
+        id: "s2",
+        title: "2. A profecia: fala à Palavra",
+        content:
+          "• Ezequiel profetiza sobre os ossos (v.4).\n• A salvação vem pela proclamação da Palavra (Rm 10:17).",
+      },
+      {
+        id: "s3",
+        title: "3. O sopro: vida pelo Espírito",
+        content:
+          "• O Espírito entra e eles se levantam, um grande exército (v.10).\n• Apelo à salvação e à entrega ao sopro de Deus.",
+      },
+    ],
+    createdAt: Date.now() - 1000 * 60 * 60 * 24,
+    updatedAt: Date.now() - 1000 * 60 * 60 * 24,
   },
   {
     id: "seed-familia",
@@ -120,37 +153,37 @@ const SEED: Sermon[] = [
     updatedAt: Date.now() - 1000 * 60 * 60 * 24 * 3,
   },
   {
-    id: "seed-salvacao",
-    title: "Do Vale dos Ossos Secos à Vida",
-    baseVerse: "Ezequiel 37:1-10",
-    theme: "A salvação que ressuscita o que estava morto",
+    id: "seed-fe",
+    title: "A Âncora da Alma",
+    baseVerse: "Hebreus 6:19",
+    theme: "Uma fé que permanece firme em meio à tempestade",
     introduction:
-      "Deus levou Ezequiel a um vale cheio de ossos secos e fez uma pergunta impossível: 'Poderão estes ossos viver?'. A resposta revela o poder restaurador da salvação.",
+      "Existem momentos em que tudo ao nosso redor parece balançar. A fé, porém, é a âncora que segura a alma quando o mar revolta. Hoje veremos como ancorar nossa confiança naquilo que não se move.",
     conclusion:
-      "Nenhuma situação está seca demais para o sopro de Deus. Onde havia morte, a Palavra e o Espírito trazem vida. Entregue hoje seus ossos secos a Ele e levante-se como parte do grande exército do Senhor.",
-    tags: ["Salvação", "Antigo Testamento"],
+      "A tempestade passa, mas a âncora permanece. Não confie no que se move ao seu redor; confie naquele que está além do véu. Lance sua âncora em Cristo hoje e descanse: sua alma está segura.",
+    tags: ["Fé", "Esperança"],
     topics: [
       {
-        id: "s1",
-        title: "1. O diagnóstico: ossos muito secos",
+        id: "t1",
+        title: "1. A tempestade é real",
         content:
-          "• A condição humana sem Deus (v.2).\n• Não havia vida, nem movimento, nem esperança natural.",
+          "• Reconhecer a dor não é falta de fé.\n• Os discípulos no barco (Marcos 4:37-38).\n• Ilustração: o navegador não nega a tempestade, ele confia na âncora.",
       },
       {
-        id: "s2",
-        title: "2. A profecia: fala à Palavra",
+        id: "t2",
+        title: "2. A âncora é firme e segura",
         content:
-          "• Ezequiel profetiza sobre os ossos (v.4).\n• A salvação vem pela proclamação da Palavra (Rm 10:17).",
+          "• A esperança como âncora 'firme e segura' (Hb 6:19).\n• Ela penetra além do véu — está presa em Cristo, não nas circunstâncias.\n• Versículo de apoio: Salmos 62:6.",
       },
       {
-        id: "s3",
-        title: "3. O sopro: vida pelo Espírito",
+        id: "t3",
+        title: "3. Lançar a âncora todos os dias",
         content:
-          "• O Espírito entra e eles se levantam, um grande exército (v.10).\n• Apelo à salvação e à entrega ao sopro de Deus.",
+          "• Decisão diária de confiar.\n• Oração + Palavra como o ato de lançar a âncora.\n• Apelo: onde você está ancorado hoje?",
       },
     ],
-    createdAt: Date.now() - 1000 * 60 * 60 * 24,
-    updatedAt: Date.now() - 1000 * 60 * 60 * 24,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 6,
+    updatedAt: Date.now() - 1000 * 60 * 60 * 24 * 6,
   },
 ];
 
