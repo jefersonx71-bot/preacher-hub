@@ -247,7 +247,7 @@ function BiblePage() {
                 className="text-xs font-semibold uppercase tracking-wide text-gold"
               >
                 {versionById(id)?.label}{" "}
-                <span className="text-muted-foreground">{versionById(id)?.language}</span>
+                <span className="text-muted-foreground">{versionById(id)?.fullName}</span>
               </span>
             ))}
           </div>
