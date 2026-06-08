@@ -46,17 +46,23 @@ export const Route = createFileRoute("/biblia")({
   component: BiblePage,
 });
 
+const DEFAULT_VERSIONS = ["nvi", "acf"];
+const VALID_IDS = new Set(BIBLE_VERSIONS.map((v) => v.id));
+
 function loadVersions(): string[] {
   try {
     const raw = localStorage.getItem(VERSIONS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as string[];
-      if (Array.isArray(parsed) && parsed.length) return parsed;
+      const valid = Array.isArray(parsed)
+        ? parsed.filter((id) => VALID_IDS.has(id))
+        : [];
+      if (valid.length) return valid.slice(0, 4);
     }
   } catch {
     // ignore
   }
-  return ["almeida", "kjv"];
+  return DEFAULT_VERSIONS;
 }
 
 function BiblePage() {
@@ -64,7 +70,7 @@ function BiblePage() {
   const [bookIdx, setBookIdx] = useState(42); // João
   const [chapter, setChapter] = useState(3);
   const [versions, setVersions] = useState<string[]>(() =>
-    typeof window === "undefined" ? ["almeida", "kjv"] : loadVersions(),
+    typeof window === "undefined" ? DEFAULT_VERSIONS : loadVersions(),
   );
 
   const book: BibleBook = BIBLE_BOOKS[bookIdx];
