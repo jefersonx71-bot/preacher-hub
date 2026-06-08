@@ -95,9 +95,9 @@ function BiblePage() {
   };
 
   const { data, isFetching, isError, error, refetch } = useQuery({
-    queryKey: ["bible", book.query, chapter, versions.join(",")],
+    queryKey: ["bible", bookIdx, chapter, versions.join(",")],
     queryFn: () =>
-      fetchFn({ data: { book: book.query, chapter, translations: versions } }),
+      fetchFn({ data: { bookIndex: bookIdx, chapter, translations: versions } }),
     staleTime: 1000 * 60 * 60,
   });
 
