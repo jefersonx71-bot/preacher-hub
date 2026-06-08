@@ -31,13 +31,13 @@ export const Route = createFileRoute("/biblia")({
       {
         name: "description",
         content:
-          "Leia a Bíblia em várias versões lado a lado (Almeida, inglês e latim) para estudo e comparação versículo a versículo.",
+          "Leia a Bíblia em várias versões em português lado a lado (NVI, ACF e Almeida Atualizada) para estudo e comparação versículo a versículo.",
       },
       { property: "og:title", content: "Bíblia para Estudo — PregaDynamic" },
       {
         property: "og:description",
         content:
-          "Compare a Bíblia em vários idiomas lado a lado, versículo a versículo, para enriquecer seu estudo.",
+          "Compare versões da Bíblia em português lado a lado, versículo a versículo, para enriquecer seu estudo e seus sermões.",
       },
       { property: "og:url", content: "/biblia" },
     ],
