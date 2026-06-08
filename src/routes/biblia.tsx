@@ -204,7 +204,7 @@ function BiblePage() {
         {/* Version selector */}
         <div className="mt-4">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-            Versões para comparar (até 4)
+            Versões em português para comparar (até 4)
           </p>
           <div className="flex flex-wrap gap-2">
             {BIBLE_VERSIONS.map((v) => {
