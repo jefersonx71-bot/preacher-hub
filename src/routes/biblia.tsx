@@ -305,7 +305,7 @@ function BiblePage() {
         )}
 
         <p className="mt-10 text-center text-xs text-muted-foreground">
-          Textos de domínio público via bible-api.com.
+          Textos bíblicos em português para estudo e comparação.
         </p>
       </main>
     </div>
