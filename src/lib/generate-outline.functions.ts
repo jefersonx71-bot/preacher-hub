@@ -44,9 +44,11 @@ Responda sempre em português do Brasil. Preserve a intenção e o conteúdo ori
 export const generateOutline = createServerFn({ method: "POST" })
   .inputValidator(inputSchema)
   .handler(async ({ data }): Promise<GeneratedOutline> => {
-    const apiKey = process.env.LOVABLE_API_KEY;
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    const lovableApiKey = process.env.LOVABLE_API_KEY;
+    const apiKey = geminiApiKey || lovableApiKey;
     if (!apiKey) {
-      console.warn("LOVABLE_API_KEY não configurada. Usando dados de preview simulados.");
+      console.warn("Nenhuma chave de API (GEMINI_API_KEY ou LOVABLE_API_KEY) configurada. Usando dados de preview simulados.");
       return new Promise((resolve) => {
         setTimeout(() => {
           const lowerText = data.text.toLowerCase();
@@ -103,14 +105,22 @@ export const generateOutline = createServerFn({ method: "POST" })
       });
     }
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const isGeminiStudio = !!geminiApiKey;
+    const baseUrl = isGeminiStudio
+      ? "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+      : "https://ai.gateway.lovable.dev/v1/chat/completions";
+    const modelName = isGeminiStudio
+      ? "gemini-1.5-flash"
+      : "google/gemini-3-flash-preview";
+
+    const response = await fetch(baseUrl, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: modelName,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: data.text },
@@ -159,7 +169,7 @@ export const generateOutline = createServerFn({ method: "POST" })
     if (response.status === 429) {
       throw new Error("Limite de requisições excedido. Aguarde um momento e tente novamente.");
     }
-    if (response.status === 402) {
+    if (response.status === 402 && !isGeminiStudio) {
       throw new Error("Créditos de IA esgotados. Adicione créditos no seu workspace Lovable.");
     }
     if (!response.ok) {

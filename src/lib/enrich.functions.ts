@@ -26,9 +26,11 @@ Responda SEMPRE em português do Brasil. Seja fiel ao texto bíblico, criativo e
 export const enrichTopic = createServerFn({ method: "POST" })
   .inputValidator(inputSchema)
   .handler(async ({ data }): Promise<EnrichResult> => {
-    const apiKey = process.env.LOVABLE_API_KEY;
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    const lovableApiKey = process.env.LOVABLE_API_KEY;
+    const apiKey = geminiApiKey || lovableApiKey;
     if (!apiKey) {
-      console.warn("LOVABLE_API_KEY não configurada. Usando dados de preview simulados.");
+      console.warn("Nenhuma chave de API (GEMINI_API_KEY ou LOVABLE_API_KEY) configurada. Usando dados de preview simulados.");
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve({
@@ -60,14 +62,22 @@ export const enrichTopic = createServerFn({ method: "POST" })
       .filter(Boolean)
       .join("\n");
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const isGeminiStudio = !!geminiApiKey;
+    const baseUrl = isGeminiStudio
+      ? "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+      : "https://ai.gateway.lovable.dev/v1/chat/completions";
+    const modelName = isGeminiStudio
+      ? "gemini-1.5-flash"
+      : "google/gemini-3-flash-preview";
+
+    const response = await fetch(baseUrl, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: modelName,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userContent },
@@ -98,7 +108,7 @@ export const enrichTopic = createServerFn({ method: "POST" })
     if (response.status === 429) {
       throw new Error("Limite de requisições excedido. Aguarde um momento e tente novamente.");
     }
-    if (response.status === 402) {
+    if (response.status === 402 && !isGeminiStudio) {
       throw new Error("Créditos de IA esgotados. Adicione créditos no seu workspace Lovable.");
     }
     if (!response.ok) {
@@ -132,9 +142,11 @@ const expandInputSchema = z.object({
 export const expandTopicContent = createServerFn({ method: "POST" })
   .inputValidator(expandInputSchema)
   .handler(async ({ data }): Promise<{ expandedContent: string }> => {
-    const apiKey = process.env.LOVABLE_API_KEY;
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    const lovableApiKey = process.env.LOVABLE_API_KEY;
+    const apiKey = geminiApiKey || lovableApiKey;
     if (!apiKey) {
-      console.warn("LOVABLE_API_KEY não configurada. Usando simulação local.");
+      console.warn("Nenhuma chave de API (GEMINI_API_KEY ou LOVABLE_API_KEY) configurada. Usando simulação local.");
       return new Promise((resolve) => {
         setTimeout(() => {
           const titleLower = data.topicTitle.toLowerCase();
@@ -193,14 +205,22 @@ Sua missão é expandir esse conteúdo para torná-lo mais rico, profundo e pron
 Você deve manter o conteúdo atual exatamente como está e adicionar 1 novo bullet ("• ") muito rico contendo uma ilustração homilética profunda, um exemplo prático cotidiano ou uma referência bíblica comentada relevante.
 Retorne APENAS o conteúdo final completo em formato de bullets separados por quebra de linha real. Não inclua introduções, explicações ou caracteres especiais além de "• ".`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const isGeminiStudio = !!geminiApiKey;
+    const baseUrl = isGeminiStudio
+      ? "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+      : "https://ai.gateway.lovable.dev/v1/chat/completions";
+    const modelName = isGeminiStudio
+      ? "gemini-1.5-flash"
+      : "google/gemini-3-flash-preview";
+
+    const response = await fetch(baseUrl, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: modelName,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: `Contexto do Sermão: Tema: ${data.theme || "N/A"}, Versículo: ${data.baseVerse || "N/A"}\nTópico: ${data.topicTitle}\nConteúdo Atual:\n${data.currentContent}` },
