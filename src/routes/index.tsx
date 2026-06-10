@@ -32,25 +32,17 @@ export const Route = createFileRoute("/")({
 function Dashboard() {
   const { sermons, deleteSermon } = useSermons();
   const [query, setQuery] = useState("");
-  const [activeTag, setActiveTag] = useState<string | null>(null);
-
-  const tags = useMemo(() => {
-    const set = new Set<string>();
-    sermons.forEach((s) => s.tags.forEach((t) => set.add(t)));
-    return Array.from(set);
-  }, [sermons]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return sermons
-      .filter((s) => (activeTag ? s.tags.includes(activeTag) : true))
       .filter((s) =>
         q
           ? s.title.toLowerCase().includes(q) || s.baseVerse.toLowerCase().includes(q)
           : true,
       )
       .sort((a, b) => b.updatedAt - a.updatedAt);
-  }, [sermons, query, activeTag]);
+  }, [sermons, query]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -116,20 +108,7 @@ function Dashboard() {
           </span>
         </Link>
 
-        {/* Tag filters */}
-        {tags.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            <TagChip label="Todos" active={activeTag === null} onClick={() => setActiveTag(null)} />
-            {tags.map((tag) => (
-              <TagChip
-                key={tag}
-                label={tag}
-                active={activeTag === tag}
-                onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-              />
-            ))}
-          </div>
-        )}
+
 
         {/* List */}
         <h2 className="mt-6 font-display text-lg font-semibold text-foreground">
@@ -163,30 +142,5 @@ function Dashboard() {
         </Link>
       </div>
     </div>
-  );
-}
-
-function TagChip({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
-        active
-          ? "border-transparent bg-primary text-primary-foreground"
-          : "border-border bg-card text-muted-foreground hover:text-foreground",
-      )}
-    >
-      {label}
-    </button>
   );
 }
