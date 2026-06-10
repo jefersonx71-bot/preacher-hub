@@ -22,24 +22,38 @@ export interface GeneratedOutline {
   theme: string;
   introduction: string;
   conclusion: string;
+  appeal: string;
   tags: string[];
   topics: { title: string; content: string }[];
 }
 
-const SYSTEM_PROMPT = `Você é um assistente teológico especializado em homilética que ajuda pregadores a transformar anotações soltas em esboços de pregação claros, organizados e prontos para o púlpito.
+const SYSTEM_PROMPT = `Você é o "Modo Jeff", um assistente especializado em gerar pregações no estilo Jeff.
 
-Estruture SEMPRE o esboço no formato clássico de três partes: INTRODUÇÃO → DESENVOLVIMENTO → CONCLUSÃO.
+NÃO escreva como um comentarista bíblico, professor acadêmico ou teólogo de seminário. Escreva como um pregador experiente de púlpito falando para pessoas comuns. O objetivo não é apenas explicar o texto, mas gerar transformação, confronto, encorajamento e aplicação prática.
 
-A partir do texto fornecido (anotações, rascunho ou pregação completa do pregador), extraia e estruture:
-- title: um título forte e memorável para a mensagem.
-- baseVerse: o versículo base principal (ex: "Hebreus 6:19"). Se houver vários, escolha o central. Se nenhum for citado, sugira o mais adequado ao tema.
-- theme: uma frase curta resumindo a ideia central.
-- introduction (INTRODUÇÃO): 2 a 4 frases que abrem a mensagem de forma envolvente, apresentando o tema e despertando interesse.
-- topics (DESENVOLVIMENTO): de 2 a 5 tópicos que desenvolvem a mensagem. Cada tópico tem um título numerado (ex: "1. A tempestade é real") e um conteúdo com tópicos em bullets começando cada item com "• " e SEPARANDO cada item com uma quebra de linha real (Enter), nunca escrevendo a sequência de caracteres "\\n". Inclua referências bíblicas, ilustrações e aplicações quando possível.
-- conclusion (CONCLUSÃO): 2 a 4 frases que recapitulam a ideia central, fecham a mensagem e fazem o apelo ou aplicação final ao ouvinte.
+CARACTERÍSTICAS OBRIGATÓRIAS DO ESTILO JEFF:
+1. Pregação Progressiva: Cada tópico deve levar naturalmente ao próximo. A mensagem deve parecer uma caminhada e não tópicos soltos. O ouvinte deve sentir que está avançando em direção ao clímax da mensagem.
+2. Linguagem de Púlpito: Use frases marcantes e coloquiais de pregação (ex: "Deus não consulta a sua condição para decidir o seu propósito", "Quem não suporta o processo não consegue administrar a promessa"). Evite linguagem excessivamente acadêmica.
+3. Aplicação Prática: Após cada explicação bíblica, faça aplicações diretas e profundas para família, casamento, trabalho, ministério, vida espiritual, perseverança e formação de caráter. O ouvinte deve conseguir se enxergar na mensagem.
+4. Conexões Bíblicas: Conecte personagens e histórias que compartilham o mesmo peso espiritual (ex: Bartimeu e Davi, José e Daniel, Moisés e Josué, Pedro e João, Elias e Eliseu) para mostrar padrões espirituais.
+5. Temas Favoritos: Priorize mensagens relacionadas a Processo, Perseverança, Fé prática, Chamado, Liderança, Caráter, Crescimento espiritual, Maturidade, Guerra espiritual, Propósito e Tempo de Deus.
+6. Ilustrações Simples: Use comparações da vida real e do cotidiano (barbearia, construção, agricultura, pesca, estradas, família, trabalho manual). Exemplo: "Assim como ninguém constrói uma casa começando pelo telhado, Deus não constrói caráter começando pela exaltação."
+7. Frases de Impacto: Cada tópico deve conter pelo menos 2 frases marcantes, curtas, fáceis de memorizar e fortes (ex: "O vale não é o destino. É a sala de treinamento.").
+8. Introdução: Curta, direta, apresenta o problema, cria curiosidade, mostra a relevância atual e prepara o tema.
+9. Conclusão: Retoma a mensagem central, conduz para uma decisão de forma urgente.
+10. Apelo: Deve surgir naturalmente da mensagem, chamando o ouvinte a uma resposta prática diante de Deus.
+
+A partir do texto fornecido (anotações, rascunhos ou transcrição), extraia e estruture:
+- title: um título forte, dinâmico e memorável.
+- baseVerse: o versículo base (ex: "Êxodo 14:21").
+- theme: a frase central / ideia central impactante.
+- introduction: a introdução instigante.
+- topics: 2 a 4 tópicos progressivos. Cada tópico tem um título numerado (ex: "1. Tópico") e um conteúdo estruturado em formato de bullets ("• "). O conteúdo deve conter uma Explicação simples, uma Aplicação prática para o cotidiano do ouvinte, e pelo menos 2 Frases de Impacto do estilo Jeff bem destacadas. Cada bullet deve ser separado por quebra de linha real (Enter).
+- conclusion: a conclusão focada na mensagem central.
+- appeal: o apelo focado na chamada de ação e resposta espiritual prática.
 - tags: 1 a 3 categorias APENAS desta lista: Fé, Família, Salvação, Antigo Testamento, Novo Testamento, Esperança, Oração, Graça.
 
-Responda sempre em português do Brasil. Preserve a intenção e o conteúdo original do pregador, apenas organizando-o melhor nesse formato. Use a ferramenta save_outline para retornar o resultado.`;
+Responda sempre em português do Brasil.`;
 
 export const generateOutline = createServerFn({ method: "POST" })
   .inputValidator(inputSchema)
@@ -60,6 +74,7 @@ export const generateOutline = createServerFn({ method: "POST" })
               theme: "Como a persistência, o descarte de velhas vestes e o clamor de fé movem o coração de Deus.",
               introduction: "Às margens do caminho de Jericó, um homem cego e mendigo chamado Bartimeu clama pela intervenção de Jesus. Embora a multidão tente calá-lo, seu clamor atrai a atenção do Mestre. Hoje aprenderemos que nenhuma barreira social ou limitação física pode impedir um coração resoluto e cheio de fé de alcançar o milagre.",
               conclusion: "Jesus ainda passa hoje ao nosso lado. Não permita que o orgulho ou as vozes da multidão o calem. Lance fora a sua capa da autocompaixão, clame pela misericórdia de Cristo e caminhe na luz da Sua salvação.",
+              appeal: "O Senhor está te chamando hoje. Se você está cansado de viver à beira do caminho mendigando atenção, lance fora a sua capa da autocompaixão e corra para os braços Daquele que te salva. Venha para o altar agora e declare a sua fé!",
               tags: ["Fé", "Salvação", "Oração"],
               topics: [
                 {
@@ -85,6 +100,7 @@ export const generateOutline = createServerFn({ method: "POST" })
             theme: "A força que vem de Deus para vencer todas as circunstâncias.",
             introduction: "Muitas vezes nos sentimos fracos e incapazes diante dos desafios da vida. No entanto, a Palavra de Deus nos revela uma fonte inesgotável de poder e graça. Hoje aprenderemos como depender totalmente Daquele que nos fortalece.",
             conclusion: "Não dependa de suas próprias forças ou recursos humanos. Quando você se render a Cristo e confessar sua dependência Dele, Ele derramará o Seu poder aperfeiçoado na sua fraqueza. Busque-O hoje mesmo.",
+            appeal: "Se você reconhece que suas forças se esgotaram e quer a unção do Espírito para vencer essa batalha, dê um passo à frente hoje. A graça de Deus te basta!",
             tags: ["Fé", "Graça", "Esperança"],
             topics: [
               {
@@ -139,6 +155,7 @@ export const generateOutline = createServerFn({ method: "POST" })
                   theme: { type: "string" },
                   introduction: { type: "string" },
                   conclusion: { type: "string" },
+                  appeal: { type: "string" },
                   tags: {
                     type: "array",
                     items: { type: "string", enum: ALLOWED_TAGS as unknown as string[] },
@@ -156,7 +173,7 @@ export const generateOutline = createServerFn({ method: "POST" })
                     },
                   },
                 },
-                required: ["title", "baseVerse", "theme", "introduction", "conclusion", "tags", "topics"],
+                required: ["title", "baseVerse", "theme", "introduction", "conclusion", "appeal", "tags", "topics"],
                 additionalProperties: false,
               },
             },
@@ -193,6 +210,7 @@ export const generateOutline = createServerFn({ method: "POST" })
       theme: parsed.theme ?? "",
       introduction: parsed.introduction ?? "",
       conclusion: parsed.conclusion ?? "",
+      appeal: parsed.appeal ?? "",
       tags: validTags,
       topics: Array.isArray(parsed.topics) ? parsed.topics : [],
     };

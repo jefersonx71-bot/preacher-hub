@@ -250,14 +250,23 @@ function Editor() {
           </Button>
         </div>
 
-        {/* Conclusão */}
+        {/* Conclusão & Apelo */}
         <div className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-soft">
           <Field label="Conclusão" htmlFor="sermon-conclusion">
             <Textarea
               id="sermon-conclusion"
               value={sermon.conclusion}
               onChange={(e) => set({ conclusion: e.target.value })}
-              placeholder="Recapitule a mensagem e faça o apelo/aplicação final..."
+              placeholder="Recapitule a mensagem..."
+              className="min-h-28"
+            />
+          </Field>
+          <Field label="Apelo (Chamada de Resposta Prática)" htmlFor="sermon-appeal">
+            <Textarea
+              id="sermon-appeal"
+              value={sermon.appeal || ""}
+              onChange={(e) => set({ appeal: e.target.value })}
+              placeholder="Escreva o apelo final para a congregação (Modo Jeff)..."
               className="min-h-28"
             />
           </Field>

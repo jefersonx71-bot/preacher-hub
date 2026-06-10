@@ -13,6 +13,7 @@ export interface Sermon {
   theme: string;
   introduction: string;
   conclusion: string;
+  appeal?: string;
   tags: string[];
   topics: Topic[];
   createdAt: number;
@@ -45,6 +46,7 @@ export function emptySermon(): Sermon {
     theme: "",
     introduction: "",
     conclusion: "",
+    appeal: "",
     tags: [],
     topics: [{ id: uid(), title: "1. Primeiro ponto", content: "" }],
     createdAt: now,
@@ -62,6 +64,8 @@ const SEED: Sermon[] = [
       "Muitas vezes clamamos a Deus por um caminho livre, mas Ele permite o vento contrário. Hoje aprenderemos que o vento forte não vem para nos destruir, mas para abrir o caminho que nos levará ao outro lado.",
     conclusion:
       "O mar se abre não apesar do vento, mas por causa dele. Confie no Senhor no meio da noite escura e sob o vento forte, pois o seu milagre está sendo preparado no meio do sopro da tempestade.",
+    appeal:
+      "Se você quer caminhar sob o vento de Deus e ver a abertura do mar em sua vida, dê um passo à frente hoje. Não tema a noite escura. Coloque a sua fé em ação!",
     tags: ["Fé", "Antigo Testamento", "Esperança"],
     topics: [
       {
@@ -95,6 +99,8 @@ const SEED: Sermon[] = [
       "Deus levou Ezequiel a um vale cheio de ossos secos e fez uma pergunta impossível: 'Poderão estes ossos viver?'. A resposta revela o poder restaurador da salvação.",
     conclusion:
       "Nenhuma situação está seca demais para o sopro de Deus. Onde havia morte, a Palavra e o Espírito trazem vida. Entregue hoje seus ossos secos a Ele e levante-se como parte do grande exército do Senhor.",
+    appeal:
+      "Se a sua esperança se secou e você precisa do sopro de ressurreição sobre a sua família ou seu coração, venha ao altar hoje. Deus está soprando vida agora!",
     tags: ["Salvação", "Antigo Testamento"],
     topics: [
       {
@@ -128,6 +134,8 @@ const SEED: Sermon[] = [
       "Toda família enfrenta ventos e enxurradas. A diferença não está em evitar as crises, mas no alicerce sobre o qual a casa foi construída. Vamos descobrir como edificar sobre a Rocha.",
     conclusion:
       "A casa que permanece não é a que nunca enfrentou tempestade, mas a que foi construída sobre a Rocha. Hoje é dia de revisar o fundamento da sua família: ouvir e praticar a Palavra de Cristo, todos os dias.",
+    appeal:
+      "Hoje é dia de firmar a sua casa na rocha. Se você decide redefinir as prioridades da sua família com base na obediência a Cristo, ore comigo hoje!",
     tags: ["Família", "Novo Testamento"],
     topics: [
       {
@@ -161,6 +169,8 @@ const SEED: Sermon[] = [
       "Existem momentos em que tudo ao nosso redor parece balançar. A fé, porém, é a âncora que segura a alma quando o mar revolta. Hoje veremos como ancorar nossa confiança naquilo que não se move.",
     conclusion:
       "A tempestade passa, mas a âncora permanece. Não confie no que se move ao seu redor; confie naquele que está além do véu. Lance sua âncora em Cristo hoje e descanse: sua alma está segura.",
+    appeal:
+      "Se a sua alma tem andado agitada pelas tempestades, venha fixar a sua âncora em Cristo hoje. Encontre descanso e segurança total!",
     tags: ["Fé", "Esperança"],
     topics: [
       {

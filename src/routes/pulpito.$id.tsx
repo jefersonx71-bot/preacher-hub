@@ -322,6 +322,17 @@ function Pulpit() {
           </div>
         )}
 
+        {sermon.appeal && (
+          <div className="mt-4 rounded-2xl border-l-4 border-red-500 bg-red-500/5 dark:bg-red-500/10 p-5 shadow-soft">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-red-500">Apelo (Decisão Prática)</p>
+            <ClickableText
+              text={sermon.appeal}
+              onWord={studyWord}
+              className="mt-2 text-lg leading-relaxed text-foreground font-medium italic"
+            />
+          </div>
+        )}
+
 
         <div className="mt-10 flex justify-center gap-3 text-sm">
           <button

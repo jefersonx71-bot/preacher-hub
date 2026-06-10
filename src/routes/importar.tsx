@@ -60,6 +60,7 @@ function ImportPage() {
         theme: outline.theme,
         introduction: outline.introduction,
         conclusion: outline.conclusion,
+        appeal: outline.appeal || "",
         tags: outline.tags,
         topics:
           outline.topics.length > 0
