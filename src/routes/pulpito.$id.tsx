@@ -99,6 +99,25 @@ function Pulpit() {
     saveSermon(updatedSermon);
   };
 
+  const handleAddContentToTopic = (topicId: string, textToAdd: string) => {
+    if (!sermon) return;
+    const targetTopic = sermon.topics.find((t) => t.id === topicId);
+    if (!targetTopic) return;
+
+    const current = targetTopic.content || "";
+    const cleanText = textToAdd.trim().replace(/^•\s*/, "");
+    const newContent = current.trim()
+      ? `${current.trim()}\n• ${cleanText}`
+      : `• ${cleanText}`;
+
+    const updatedTopics = sermon.topics.map((t) =>
+      t.id === topicId ? { ...t, content: newContent } : t
+    );
+    const updatedSermon = { ...sermon, topics: updatedTopics };
+    setSermon(updatedSermon);
+    saveSermon(updatedSermon);
+  };
+
   const studyWord = (word: string) => {
     setDictTerm(word);
     setDictOpen(true);
@@ -362,6 +381,11 @@ function Pulpit() {
         sermon={sermon}
         topic={enrichTopicState}
         onOpenChange={setEnrichOpen}
+        onAddContent={(text) => {
+          if (enrichTopicState) {
+            handleAddContentToTopic(enrichTopicState.id, text);
+          }
+        }}
       />
     </div>
   );

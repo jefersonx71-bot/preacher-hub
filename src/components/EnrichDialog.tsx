@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Lightbulb, Loader2, RefreshCw, Sparkles, Users, WifiOff } from "lucide-react";
+import { BookOpen, Lightbulb, Loader2, Plus, RefreshCw, Sparkles, Users, WifiOff } from "lucide-react";
 import { parseBibleReference } from "@/lib/utils";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,7 @@ interface EnrichDialogProps {
   sermon: Sermon | null;
   topic: Topic | null;
   onOpenChange: (open: boolean) => void;
+  onAddContent?: (text: string) => void;
 }
 
 const CACHE_KEY = "pregadynamic-enrich-cache";
@@ -46,7 +48,7 @@ function setCachedEntry(key: string, entry: EnrichResult) {
   }
 }
 
-export function EnrichDialog({ open, sermon, topic, onOpenChange }: EnrichDialogProps) {
+export function EnrichDialog({ open, sermon, topic, onOpenChange, onAddContent }: EnrichDialogProps) {
   const enrich = useServerFn(enrichTopic);
   const [result, setResult] = useState<EnrichResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -156,9 +158,20 @@ export function EnrichDialog({ open, sermon, topic, onOpenChange }: EnrichDialog
                   {result.illustrations.map((item, i) => (
                     <li
                       key={i}
-                      className="rounded-2xl border-l-4 border-gold bg-card p-3 text-sm leading-relaxed text-foreground/90"
+                      className="group relative rounded-2xl border-l-4 border-gold bg-card p-3 pr-10 text-sm leading-relaxed text-foreground/90 transition-all hover:bg-gold/5"
                     >
-                      {item}
+                      <span>{item}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onAddContent?.(item);
+                          toast.success("Ilustração adicionada ao sermão!");
+                        }}
+                        className="absolute bottom-2.5 right-2.5 flex size-7 items-center justify-center rounded-full bg-gold/10 hover:bg-gold text-gold hover:text-gold-foreground transition-all duration-200 active:scale-90"
+                        title="Adicionar ao sermão"
+                      >
+                        <Plus className="size-4" />
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -174,9 +187,20 @@ export function EnrichDialog({ open, sermon, topic, onOpenChange }: EnrichDialog
                   {result.examples.map((item, i) => (
                     <li
                       key={i}
-                      className="rounded-xl bg-secondary/50 p-3 text-sm leading-relaxed text-foreground/90"
+                      className="group relative rounded-xl bg-secondary/50 p-3 pr-10 text-sm leading-relaxed text-foreground/90 transition-all hover:bg-secondary"
                     >
-                      {item}
+                      <span>{item}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onAddContent?.(item);
+                          toast.success("Exemplo prático adicionado ao sermão!");
+                        }}
+                        className="absolute bottom-2.5 right-2.5 flex size-7 items-center justify-center rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground transition-all duration-200 active:scale-90"
+                        title="Adicionar ao sermão"
+                      >
+                        <Plus className="size-4" />
+                      </button>
                     </li>
                   ))}
                 </ul>
