@@ -110,7 +110,7 @@ export const generateOutline = createServerFn({ method: "POST" })
       ? "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
       : "https://ai.gateway.lovable.dev/v1/chat/completions";
     const modelName = isGeminiStudio
-      ? "gemini-1.5-flash"
+      ? "gemini-2.5-flash"
       : "google/gemini-3-flash-preview";
 
     const response = await fetch(baseUrl, {
