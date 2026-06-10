@@ -60,17 +60,6 @@ function Dashboard() {
           <ThemeToggle />
         </header>
 
-        {/* Search */}
-        <div className="relative mt-6">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar por título ou versículo..."
-            aria-label="Buscar esboços por título ou versículo"
-            className="h-12 rounded-xl border-border bg-card pl-10 text-base shadow-soft"
-          />
-        </div>
 
         {/* AI import banner */}
         <Link
@@ -110,10 +99,22 @@ function Dashboard() {
 
 
 
-        {/* List */}
-        <h2 className="mt-6 font-display text-lg font-semibold text-foreground">
-          Esboços salvos
-        </h2>
+        {/* List Header with Search */}
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="font-display text-lg font-semibold text-foreground">
+            Esboços salvos
+          </h2>
+          <div className="relative w-full sm:w-72">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/70" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por título ou versículo..."
+              aria-label="Buscar esboços por título ou versículo"
+              className="h-10 rounded-xl border-border bg-card pl-9 pr-4 text-sm shadow-soft transition-all focus-visible:ring-1 focus-visible:ring-gold"
+            />
+          </div>
+        </div>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
           {filtered.map((sermon) => (
             <SermonCard key={sermon.id} sermon={sermon} onDelete={deleteSermon} />
