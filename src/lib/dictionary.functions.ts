@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const inputSchema = z.object({
-  term: z.string().trim().min(2).max(80),
+  term: z.string().trim().min(2).max(250),
 });
 
 export interface DictionaryEntry {
