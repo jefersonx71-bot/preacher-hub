@@ -362,6 +362,14 @@ function Dashboard() {
                 </div>
               )}
             </div>
+
+            {/* Dica sobre Modo Offline */}
+            <div className="flex gap-2.5 items-start bg-secondary/5 border border-border/60 p-3 rounded-lg text-xs text-muted-foreground mt-3">
+              <AlertCircle className="size-4.5 text-gold shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                <strong className="text-foreground">Dica de Púlpito:</strong> Seus esboços são salvos no navegador automaticamente e funcionam <strong className="text-gold">100% offline</strong> sem internet. A sincronização em nuvem serve para compartilhar os esboços com seus outros aparelhos.
+              </p>
+            </div>
           </div>
         )}
 
@@ -387,17 +395,20 @@ function Dashboard() {
         {/* Bible study link */}
         <Link
           to="/biblia"
-          className="mt-3 flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-secondary/35"
+          className="mt-3 flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-secondary/35 relative overflow-hidden group"
         >
           <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 text-primary">
             <BookOpen className="size-5" />
           </span>
-          <span className="min-w-0">
-            <span className="block font-display text-base font-semibold text-foreground">
+          <span className="min-w-0 flex-1">
+            <span className="flex items-center gap-2 font-display text-base font-semibold text-foreground">
               Bíblia para estudo
+              <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-500 border border-emerald-500/20">
+                Suporta Offline
+              </span>
             </span>
             <span className="block text-sm text-muted-foreground">
-              Leia em várias versões lado a lado, versículo a versículo
+              Leia e compare versões versículo a versículo (baixe para o púlpito)
             </span>
           </span>
         </Link>

@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, Loader2, Search, Sparkles } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, Loader2, Search, Sparkles, Cloud, CheckCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { fetchChapter, type ParallelVerse, type BibleChapterResult } from "@/lib/bible.functions";
 import { toast } from "sonner";
@@ -23,9 +23,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn, parseBibleReference } from "@/lib/utils";
-import { lookupTerm, type DictionaryEntry } from "@/lib/dictionary.functions";
+import { lookupTerm, getMockEntry, type DictionaryEntry } from "@/lib/dictionary.functions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const VERSIONS_KEY = "pregadynamic-bible-versions";
 
@@ -314,7 +322,13 @@ function BiblePage() {
       const entry = await lookup({ data: { term: clean } });
       setStudyResult(entry);
     } catch (e) {
-      setStudyError(e instanceof Error ? e.message : "Erro ao buscar o personagem ou termo.");
+      console.warn("Falha na busca online, tentando banco de dados local...", e);
+      try {
+        const localEntry = getMockEntry(clean);
+        setStudyResult(localEntry);
+      } catch (err) {
+        setStudyError(e instanceof Error ? e.message : "Erro ao buscar o personagem ou termo.");
+      }
     } finally {
       setStudyLoading(false);
     }
@@ -391,26 +405,62 @@ function BiblePage() {
     setChapter(1);
   };
 
-  return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-3">
-          <Link
-            to="/"
-            aria-label="Voltar ao painel"
-            className="flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
-          >
-            <ArrowLeft className="size-5" />
-          </Link>
-          <p className="flex items-center gap-1.5 font-display text-lg font-semibold text-foreground">
-            <BookOpen className="size-5 text-gold" />
-            Bíblia
-          </p>
-          <ThemeToggle />
-        </div>
-      </header>
+  const hasAnyCached = Object.values(cachedVersions).some(Boolean);
 
-      <main className="mx-auto w-full max-w-5xl px-4 pb-24 pt-6">
+  return (
+    <Dialog>
+      <div className="min-h-screen bg-background">
+        <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
+          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-3">
+            <Link
+              to="/"
+              aria-label="Voltar ao painel"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
+            >
+              <ArrowLeft className="size-5" />
+            </Link>
+            <p className="flex items-center gap-1.5 font-display text-lg font-semibold text-foreground">
+              <BookOpen className="size-5 text-gold" />
+              Bíblia
+            </p>
+            <div className="flex items-center gap-2">
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "h-9 gap-1.5 rounded-lg text-xs font-semibold border-border bg-card text-muted-foreground hover:text-foreground cursor-pointer relative",
+                    hasAnyCached && "text-emerald-500 border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10"
+                  )}
+                >
+                  <Cloud className="size-4" />
+                  <span>Baixar Bíblia</span>
+                </Button>
+              </DialogTrigger>
+              <ThemeToggle />
+            </div>
+          </div>
+        </header>
+
+        <main className="mx-auto w-full max-w-5xl px-4 pb-24 pt-6">
+          {!hasAnyCached && typeof navigator !== "undefined" && navigator.onLine && (
+            <div className="mb-6 rounded-xl border border-gold/20 bg-gold/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
+              <div className="flex gap-2.5 items-start">
+                <Cloud className="size-5 text-gold shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-semibold text-foreground">Leitura 100% Offline no Púlpito</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Você ainda não baixou nenhuma tradução bíblica para uso offline. Baixe agora para ler no púlpito mesmo sem sinal de internet.
+                  </p>
+                </div>
+              </div>
+              <DialogTrigger asChild>
+                <Button size="sm" className="bg-gold text-gold-foreground font-semibold shrink-0 hover:bg-gold/90 h-9 rounded-lg px-4 cursor-pointer text-xs">
+                  Escolher Versões
+                </Button>
+              </DialogTrigger>
+            </div>
+          )}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 bg-card border border-border/60 p-1 rounded-xl mb-6">
             <TabsTrigger value="versions" className="rounded-lg py-2 font-medium text-sm data-[state=active]:bg-secondary data-[state=active]:text-foreground text-muted-foreground transition-all">
@@ -800,7 +850,59 @@ function BiblePage() {
             </div>
           </TabsContent>
         </Tabs>
-      </main>
-    </div>
+        </main>
+
+        <DialogContent className="sm:max-w-[480px] rounded-2xl border-border bg-card p-6">
+          <DialogHeader>
+            <DialogTitle className="font-display text-lg font-bold text-foreground flex items-center gap-2">
+              <Cloud className="size-5 text-gold" /> Uso Offline da Bíblia
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground pt-1.5">
+              Baixe as traduções para que a leitura e comparação versículo a versículo funcionem no púlpito mesmo sem nenhuma conexão à internet.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 mt-4">
+            {BIBLE_VERSIONS.map((v) => {
+              const isCached = cachedVersions[v.id];
+              const isDownloading = downloadingVersion === v.id;
+
+              return (
+                <div
+                  key={v.id}
+                  className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-background/40 text-sm hover:bg-background/60 transition-colors"
+                >
+                  <div className="space-y-0.5">
+                    <span className="font-bold text-foreground uppercase text-xs">{v.label}</span>
+                    <span className="text-muted-foreground ml-2 text-xs">({v.fullName})</span>
+                  </div>
+
+                  {isCached ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/25">
+                      <CheckCircle className="size-3" /> Salvo Offline
+                    </span>
+                  ) : (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => downloadVersion(v.id)}
+                      disabled={isDownloading}
+                      className="h-8 text-xs font-semibold px-4 rounded-lg bg-gold/15 text-gold hover:bg-gold/25 cursor-pointer disabled:opacity-50"
+                    >
+                      {isDownloading ? (
+                        <Loader2 className="size-3.5 animate-spin" />
+                      ) : (
+                        "Baixar"
+                      )}
+                    </Button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </div>
+    </Dialog>
   );
 }
