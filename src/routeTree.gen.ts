@@ -15,6 +15,8 @@ import { Route as BibliaRouteImport } from './routes/biblia'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PulpitoIdRouteImport } from './routes/pulpito.$id'
 import { Route as EditorIdRouteImport } from './routes/editor.$id'
+import { Route as ApiGenerateOutlineStreamRouteImport } from './routes/api.generate-outline-stream'
+import { Route as ApiAnalyzeSermonStreamRouteImport } from './routes/api.analyze-sermon-stream'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -46,12 +48,25 @@ const EditorIdRoute = EditorIdRouteImport.update({
   path: '/editor/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGenerateOutlineStreamRoute =
+  ApiGenerateOutlineStreamRouteImport.update({
+    id: '/api/generate-outline-stream',
+    path: '/api/generate-outline-stream',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiAnalyzeSermonStreamRoute = ApiAnalyzeSermonStreamRouteImport.update({
+  id: '/api/analyze-sermon-stream',
+  path: '/api/analyze-sermon-stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/biblia': typeof BibliaRoute
   '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/analyze-sermon-stream': typeof ApiAnalyzeSermonStreamRoute
+  '/api/generate-outline-stream': typeof ApiGenerateOutlineStreamRoute
   '/editor/$id': typeof EditorIdRoute
   '/pulpito/$id': typeof PulpitoIdRoute
 }
@@ -60,6 +75,8 @@ export interface FileRoutesByTo {
   '/biblia': typeof BibliaRoute
   '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/analyze-sermon-stream': typeof ApiAnalyzeSermonStreamRoute
+  '/api/generate-outline-stream': typeof ApiGenerateOutlineStreamRoute
   '/editor/$id': typeof EditorIdRoute
   '/pulpito/$id': typeof PulpitoIdRoute
 }
@@ -69,6 +86,8 @@ export interface FileRoutesById {
   '/biblia': typeof BibliaRoute
   '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/analyze-sermon-stream': typeof ApiAnalyzeSermonStreamRoute
+  '/api/generate-outline-stream': typeof ApiGenerateOutlineStreamRoute
   '/editor/$id': typeof EditorIdRoute
   '/pulpito/$id': typeof PulpitoIdRoute
 }
@@ -79,6 +98,8 @@ export interface FileRouteTypes {
     | '/biblia'
     | '/importar'
     | '/sitemap.xml'
+    | '/api/analyze-sermon-stream'
+    | '/api/generate-outline-stream'
     | '/editor/$id'
     | '/pulpito/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +108,8 @@ export interface FileRouteTypes {
     | '/biblia'
     | '/importar'
     | '/sitemap.xml'
+    | '/api/analyze-sermon-stream'
+    | '/api/generate-outline-stream'
     | '/editor/$id'
     | '/pulpito/$id'
   id:
@@ -95,6 +118,8 @@ export interface FileRouteTypes {
     | '/biblia'
     | '/importar'
     | '/sitemap.xml'
+    | '/api/analyze-sermon-stream'
+    | '/api/generate-outline-stream'
     | '/editor/$id'
     | '/pulpito/$id'
   fileRoutesById: FileRoutesById
@@ -104,6 +129,8 @@ export interface RootRouteChildren {
   BibliaRoute: typeof BibliaRoute
   ImportarRoute: typeof ImportarRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiAnalyzeSermonStreamRoute: typeof ApiAnalyzeSermonStreamRoute
+  ApiGenerateOutlineStreamRoute: typeof ApiGenerateOutlineStreamRoute
   EditorIdRoute: typeof EditorIdRoute
   PulpitoIdRoute: typeof PulpitoIdRoute
 }
@@ -152,6 +179,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EditorIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/generate-outline-stream': {
+      id: '/api/generate-outline-stream'
+      path: '/api/generate-outline-stream'
+      fullPath: '/api/generate-outline-stream'
+      preLoaderRoute: typeof ApiGenerateOutlineStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/analyze-sermon-stream': {
+      id: '/api/analyze-sermon-stream'
+      path: '/api/analyze-sermon-stream'
+      fullPath: '/api/analyze-sermon-stream'
+      preLoaderRoute: typeof ApiAnalyzeSermonStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -160,6 +201,8 @@ const rootRouteChildren: RootRouteChildren = {
   BibliaRoute: BibliaRoute,
   ImportarRoute: ImportarRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiAnalyzeSermonStreamRoute: ApiAnalyzeSermonStreamRoute,
+  ApiGenerateOutlineStreamRoute: ApiGenerateOutlineStreamRoute,
   EditorIdRoute: EditorIdRoute,
   PulpitoIdRoute: PulpitoIdRoute,
 }

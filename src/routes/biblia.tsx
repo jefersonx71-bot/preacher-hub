@@ -5,7 +5,8 @@ import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, Loader2, Search, Sparkles } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { fetchChapter } from "@/lib/bible.functions";
+import { fetchChapter, type ParallelVerse, type BibleChapterResult } from "@/lib/bible.functions";
+import { toast } from "sonner";
 import {
   BIBLE_BOOKS,
   BIBLE_VERSIONS,
@@ -90,6 +91,133 @@ function getCleanSearchTerm(title: string): string {
   return term;
 }
 
+interface DatasetBook {
+  abbrev: string;
+  name?: string;
+  chapters: string[][];
+}
+
+const clientDatasetCache = new Map<string, DatasetBook[]>();
+
+async function loadDatasetClient(slug: string): Promise<DatasetBook[] | null> {
+  const cached = clientDatasetCache.get(slug);
+  if (cached) return cached;
+
+  const lowerSlug = slug.toLowerCase();
+  try {
+    const res = await fetch(`/bible-data/${lowerSlug}.json`);
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    const data = await res.json() as DatasetBook[];
+    if (Array.isArray(data) && data.length === 66) {
+      clientDatasetCache.set(slug, data);
+      return data;
+    }
+  } catch (err) {
+    console.error(`Erro ao carregar tradução ${slug} no cliente`, err);
+  }
+  return null;
+}
+
+const GLOSSARY: Record<string, string> = {
+  "Deus": "Deus [Heb. Elohim H430 / Gr. Theos G2316]",
+  "deus": "deus [Gr. theos G2316]",
+  "Senhor": "Senhor [Heb. Yahweh H3068 / Gr. Kyrios G2962]",
+  "senhor": "senhor [Gr. kyrios G2962]",
+  "Jesus": "Jesus [Gr. Iesous G2424]",
+  "Cristo": "Cristo [Gr. Christos G5547]",
+  "amou": "amou [Gr. agapao G25]",
+  "amor": "amor [Gr. agape G26]",
+  "mundo": "mundo [Gr. kosmos G2889]",
+  "vida": "vida [Gr. zoe G2222]",
+  "eterna": "eterna [Gr. aionios G166]",
+  "filho": "filho [Gr. huios G5207]",
+  "Filho": "Filho [Gr. Huios G5207]",
+  "pai": "pai [Gr. pater G3962]",
+  "Pai": "Pai [Gr. Pater G3962]",
+  "fé": "fé [Gr. pistis G4102]",
+  "crer": "crer [Gr. pisteuo G4100]",
+  "crê": "crê [Gr. pisteuo G4100]",
+  "creem": "creem [Gr. pisteuo G4100]",
+  "salvação": "salvação [Gr. soteria G4991]",
+  "salvo": "salvo [Gr. sozo G4982]",
+  "salva": "salva [Gr. sozo G4982]",
+  "Graça": "Graça [Gr. charis G5485]",
+  "graça": "graça [Gr. charis G5485]",
+  "Verbo": "Verbo [Gr. logos G3056]",
+  "Palavra": "Palavra [Gr. logos G3056]",
+  "palavra": "palavra [Gr. logos G3056]",
+  "princípio": "princípio [Heb. reshith H7225 / Gr. arche G746]",
+  "espírito": "espírito [Heb. ruach H7307 / Gr. pneuma G4151]",
+  "Espírito": "Espírito [Heb. Ruach H7307 / Gr. Pneuma G4151]",
+  "carne": "carne [Heb. basar H1320 / Gr. sarx G4561]",
+  "terra": "terra [Heb. eretz H776 / Gr. ge G1093]",
+  "ceu": "céu [Heb. shamayim H8064 / Gr. ouranos G3772]",
+  "céus": "céus [Heb. shamayim H8064 / Gr. ouranos G3772]",
+  "luz": "luz [Heb. or H216 / Gr. phos G5457]",
+  "trevas": "trevas [Heb. choshek H2822 / Gr. skotos G4655]",
+  "verdade": "verdade [Heb. emeth H571 / Gr. aletheia G225]",
+  "coração": "coração [Heb. leb H3820 / Gr. kardia G2588]",
+  "lei": "lei [Heb. torah H8451 / Gr. nomos G3551]",
+  "pecado": "pecado [Heb. chatá H2398 / Gr. hamartia G266]",
+  "misericórdia": "misericórdia [Heb. chesed H2617 / Gr. eleos G1656]",
+  "aliança": "aliança [Heb. berith H1285 / Gr. diatheke G1242]",
+  "igreja": "igreja [Gr. ekklesia G1577]",
+  "anjo": "anjo [Heb. malak H4397 / Gr. angelos G32]",
+  "anjos": "anjos [Heb. malak H4397 / Gr. angelos G32]"
+};
+
+function enrichInterlinearClient(text: string): string {
+  let enriched = text;
+  Object.entries(GLOSSARY).forEach(([word, replacement]) => {
+    const regex = new RegExp(`(?<=^|[^a-zA-Zá-úÁ-ÚçÇñÑ])${word}(?=$|[^a-zA-Zá-úÁ-ÚçÇñÑ])`, 'g');
+    enriched = enriched.replace(regex, replacement);
+  });
+  return enriched;
+}
+
+async function fetchChapterOffline(
+  bookIndex: number,
+  chapter: number,
+  translations: string[]
+): Promise<BibleChapterResult> {
+  const translationsToFetch = translations.map((t) => t === "interlinear" ? "acf" : t);
+
+  const datasets = await Promise.all(
+    translationsToFetch.map((t) => loadDatasetClient(t))
+  );
+
+  const byVerse = new Map<number, Record<string, string>>();
+
+  translations.forEach((translation, idx) => {
+    const ds = datasets[idx];
+    const book = ds?.[bookIndex];
+    const verses = book?.chapters?.[chapter - 1];
+    if (!verses) return;
+    verses.forEach((text, vi) => {
+      const verse = vi + 1;
+      const entry = byVerse.get(verse) ?? {};
+      let processedText = (text ?? "").replace(/\s+/g, " ").trim();
+      
+      if (translation === "interlinear") {
+        processedText = enrichInterlinearClient(processedText);
+      }
+
+      entry[translation] = processedText;
+      byVerse.set(verse, entry);
+    });
+  });
+
+  if (byVerse.size === 0) {
+    throw new Error("Não foi possível carregar este capítulo offline. Certifique-se de que a tradução foi baixada.");
+  }
+
+  const verses: ParallelVerse[] = Array.from(byVerse.entries())
+    .sort((a, b) => a[0] - b[0])
+    .map(([verse, texts]) => ({ verse, texts }));
+
+  return { translations, verses };
+}
+
 function BiblePage() {
   const search = Route.useSearch();
   const fetchFn = useServerFn(fetchChapter);
@@ -124,6 +252,45 @@ function BiblePage() {
   );
 
   const [activeTab, setActiveTab] = useState("versions");
+
+  const [cachedVersions, setCachedVersions] = useState<Record<string, boolean>>({});
+  const [downloadingVersion, setDownloadingVersion] = useState<string | null>(null);
+
+  const checkCacheStatus = async () => {
+    if (typeof window === "undefined" || !("caches" in window)) return;
+    const status: Record<string, boolean> = {};
+    for (const v of BIBLE_VERSIONS) {
+      if (v.id === "interlinear") {
+        const hasAcf = await caches.match("/bible-data/acf.json");
+        status[v.id] = !!hasAcf;
+      } else {
+        const cacheResponse = await caches.match(`/bible-data/${v.id}.json`);
+        status[v.id] = !!cacheResponse;
+      }
+    }
+    setCachedVersions(status);
+  };
+
+  const downloadVersion = async (versionId: string) => {
+    if (typeof window === "undefined" || !("caches" in window)) return;
+    const idToFetch = versionId === "interlinear" ? "acf" : versionId;
+    setDownloadingVersion(versionId);
+    try {
+      const cache = await caches.open("pregadynamic-cache-v1");
+      await cache.add(`/bible-data/${idToFetch}.json`);
+      toast.success(`Bíblia (${versionId.toUpperCase()}) baixada para uso 100% offline!`);
+      await checkCacheStatus();
+    } catch (err) {
+      console.error(err);
+      toast.error(`Erro ao baixar tradução: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setDownloadingVersion(null);
+    }
+  };
+
+  useEffect(() => {
+    checkCacheStatus();
+  }, []);
   
   // Abas de estudo de personagens
   const [studyQuery, setStudyQuery] = useState("");
@@ -198,8 +365,14 @@ function BiblePage() {
 
   const { data, isFetching, isError, error, refetch } = useQuery({
     queryKey: ["bible", bookIdx, chapter, versions.join(",")],
-    queryFn: () =>
-      fetchFn({ data: { bookIndex: bookIdx, chapter, translations: versions } }),
+    queryFn: async () => {
+      try {
+        return await fetchFn({ data: { bookIndex: bookIdx, chapter, translations: versions } });
+      } catch (err) {
+        console.warn("Falha ao buscar capítulo do servidor, tentando modo offline...", err);
+        return await fetchChapterOffline(bookIdx, chapter, versions);
+      }
+    },
     staleTime: 1000 * 60 * 60,
   });
 
@@ -337,6 +510,55 @@ function BiblePage() {
                       {v.label}
                       <span className="ml-1.5 text-xs opacity-70">{v.fullName}</span>
                     </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Gerenciar Modo Offline */}
+            <div className="mt-4 rounded-xl border border-border bg-card/50 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground flex items-center gap-1.5">
+                  <BookOpen className="size-4 text-gold" /> Uso Offline da Bíblia
+                </h3>
+                <span className="text-[10px] text-muted-foreground uppercase font-bold">
+                  {typeof navigator !== "undefined" && navigator.onLine ? "Online" : "Modo Offline"}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Baixe as traduções abaixo para que a leitura e comparação versículo a versículo funcionem no púlpito mesmo sem internet.
+              </p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {BIBLE_VERSIONS.map((v) => {
+                  const isCached = cachedVersions[v.id];
+                  const isDownloading = downloadingVersion === v.id;
+                  
+                  return (
+                    <div key={v.id} className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-background/50 text-xs">
+                      <div>
+                        <span className="font-semibold text-foreground uppercase">{v.label}</span>
+                        <span className="text-muted-foreground ml-1.5">({v.fullName})</span>
+                      </div>
+                      
+                      {isCached ? (
+                        <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                          Salvo Offline
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => downloadVersion(v.id)}
+                          disabled={isDownloading}
+                          className="font-semibold text-gold hover:underline cursor-pointer flex items-center gap-1 disabled:opacity-50"
+                        >
+                          {isDownloading ? (
+                            <Loader2 className="size-3 animate-spin" />
+                          ) : (
+                            "Baixar"
+                          )}
+                        </button>
+                      )}
+                    </div>
                   );
                 })}
               </div>

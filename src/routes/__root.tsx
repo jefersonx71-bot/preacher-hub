@@ -81,6 +81,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "PregaDynamic — Esboços de Pregação" },
       { name: "description", content: "Organize seus esboços de pregação com sumários retráteis e um Modo Púlpito dinâmico para o momento da mensagem." },
       { name: "author", content: "PregaDynamic" },
+      { name: "theme-color", content: "#060b13" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "PregaDynamic" },
       { property: "og:title", content: "PregaDynamic — Esboços de Pregação" },
       { property: "og:description", content: "Organize seus esboços de pregação com sumários retráteis e um Modo Púlpito dinâmico para o momento da mensagem." },
       { property: "og:type", content: "website" },
@@ -92,6 +96,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d281c731-ede5-4fe2-aeb8-25e7dbc74e31/id-preview-448f2013--416c9567-eb3e-424f-8771-dca1edb8d9fd.lovable.app-1780429330572.png" },
     ],
     links: [
+      {
+        rel: "manifest",
+        href: "/manifest.json",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/icons/icon-192.png",
+      },
+      {
+        rel: "icon",
+        type: "image/svg+xml",
+        href: "/icon.svg",
+      },
       {
         rel: "preconnect",
         href: "https://fonts.googleapis.com",
@@ -133,6 +150,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((reg) => {
+            console.log("Service Worker registered successfully:", reg.scope);
+          })
+          .catch((err) => {
+            console.error("Service Worker registration failed:", err);
+          });
+      });
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

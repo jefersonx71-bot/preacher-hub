@@ -118,6 +118,13 @@ function Pulpit() {
     saveSermon(updatedSermon);
   };
 
+  const handleDeleteAppeal = () => {
+    if (!sermon) return;
+    const updatedSermon = { ...sermon, appeal: "" };
+    setSermon(updatedSermon);
+    saveSermon(updatedSermon);
+  };
+
   const studyWord = (word: string) => {
     setDictTerm(word);
     setDictOpen(true);
@@ -342,13 +349,22 @@ function Pulpit() {
         )}
 
         {sermon.appeal && (
-          <div className="mt-4 rounded-2xl border-l-4 border-red-500 bg-red-500/5 dark:bg-red-500/10 p-5 shadow-soft">
+          <div className="relative mt-4 rounded-2xl border-l-4 border-red-500 bg-red-500/5 dark:bg-red-500/10 p-5 pr-12 shadow-soft">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-red-500">Apelo (Decisão Prática)</p>
             <ClickableText
               text={sermon.appeal}
               onWord={studyWord}
               className="mt-2 text-lg leading-relaxed text-foreground font-medium italic"
             />
+            <button
+              type="button"
+              onClick={handleDeleteAppeal}
+              aria-label="Apagar apelo"
+              title="Apagar apelo"
+              className="absolute bottom-4 right-4 flex size-8 items-center justify-center rounded-full text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+            >
+              <X className="size-5" />
+            </button>
           </div>
         )}
 

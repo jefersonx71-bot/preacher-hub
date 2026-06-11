@@ -34,6 +34,27 @@ async function loadDataset(slug: string): Promise<DatasetBook[] | null> {
   if (cached) return cached;
 
   const lowerSlug = slug.toLowerCase();
+
+  // Tenta carregar localmente do sistema de arquivos
+  try {
+    const fs = await import("fs");
+    const path = await import("path");
+    const filePath = path.join(process.cwd(), "src", "lib", "bible-data", `${lowerSlug}.json`);
+    
+    if (fs.existsSync(filePath)) {
+      let text = fs.readFileSync(filePath, "utf8");
+      if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+      const data = JSON.parse(text) as DatasetBook[];
+      if (Array.isArray(data) && data.length === 66) {
+        datasetCache.set(slug, data);
+        return data;
+      }
+    }
+  } catch (err) {
+    console.warn(`Falha ao ler Bíblia local para ${slug}, tentando obter da rede...`, err);
+  }
+
+  // Fallback para a rede
   let url = "";
 
   if (lowerSlug === "ntlh" || lowerSlug === "nvt" || lowerSlug === "naa") {
