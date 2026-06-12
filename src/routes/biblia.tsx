@@ -267,13 +267,35 @@ function BiblePage() {
   const checkCacheStatus = async () => {
     if (typeof window === "undefined" || !("caches" in window)) return;
     const status: Record<string, boolean> = {};
-    for (const v of BIBLE_VERSIONS) {
-      if (v.id === "interlinear") {
-        const hasAcf = await caches.match("/bible-data/acf.json");
-        status[v.id] = !!hasAcf;
-      } else {
-        const cacheResponse = await caches.match(`/bible-data/${v.id}.json`);
-        status[v.id] = !!cacheResponse;
+    try {
+      const cache = await caches.open("pregadynamic-cache-v1");
+      const requests = await cache.keys();
+      const cachedPaths = new Set(
+        requests.map((r) => {
+          try {
+            return new URL(r.url, window.location.origin).pathname;
+          } catch {
+            return "";
+          }
+        }).filter(Boolean)
+      );
+
+      for (const v of BIBLE_VERSIONS) {
+        const idToCheck = v.id === "interlinear" ? "acf" : v.id;
+        const targetPath = `/bible-data/${idToCheck}.json`;
+        status[v.id] = cachedPaths.has(targetPath);
+      }
+    } catch (err) {
+      console.error("Erro ao verificar cache offline:", err);
+      // Fallback
+      for (const v of BIBLE_VERSIONS) {
+        if (v.id === "interlinear") {
+          const hasAcf = await caches.match("/bible-data/acf.json");
+          status[v.id] = !!hasAcf;
+        } else {
+          const cacheResponse = await caches.match(`/bible-data/${v.id}.json`);
+          status[v.id] = !!cacheResponse;
+        }
       }
     }
     setCachedVersions(status);
