@@ -17,6 +17,7 @@ import { Route as PulpitoIdRouteImport } from './routes/pulpito.$id'
 import { Route as EditorIdRouteImport } from './routes/editor.$id'
 import { Route as ApiGenerateOutlineStreamRouteImport } from './routes/api.generate-outline-stream'
 import { Route as ApiAnalyzeSermonStreamRouteImport } from './routes/api.analyze-sermon-stream'
+import { Route as ApiAdaptSermonStreamRouteImport } from './routes/api.adapt-sermon-stream'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -59,12 +60,18 @@ const ApiAnalyzeSermonStreamRoute = ApiAnalyzeSermonStreamRouteImport.update({
   path: '/api/analyze-sermon-stream',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdaptSermonStreamRoute = ApiAdaptSermonStreamRouteImport.update({
+  id: '/api/adapt-sermon-stream',
+  path: '/api/adapt-sermon-stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/biblia': typeof BibliaRoute
   '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/adapt-sermon-stream': typeof ApiAdaptSermonStreamRoute
   '/api/analyze-sermon-stream': typeof ApiAnalyzeSermonStreamRoute
   '/api/generate-outline-stream': typeof ApiGenerateOutlineStreamRoute
   '/editor/$id': typeof EditorIdRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/biblia': typeof BibliaRoute
   '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/adapt-sermon-stream': typeof ApiAdaptSermonStreamRoute
   '/api/analyze-sermon-stream': typeof ApiAnalyzeSermonStreamRoute
   '/api/generate-outline-stream': typeof ApiGenerateOutlineStreamRoute
   '/editor/$id': typeof EditorIdRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/biblia': typeof BibliaRoute
   '/importar': typeof ImportarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/adapt-sermon-stream': typeof ApiAdaptSermonStreamRoute
   '/api/analyze-sermon-stream': typeof ApiAnalyzeSermonStreamRoute
   '/api/generate-outline-stream': typeof ApiGenerateOutlineStreamRoute
   '/editor/$id': typeof EditorIdRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/biblia'
     | '/importar'
     | '/sitemap.xml'
+    | '/api/adapt-sermon-stream'
     | '/api/analyze-sermon-stream'
     | '/api/generate-outline-stream'
     | '/editor/$id'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/biblia'
     | '/importar'
     | '/sitemap.xml'
+    | '/api/adapt-sermon-stream'
     | '/api/analyze-sermon-stream'
     | '/api/generate-outline-stream'
     | '/editor/$id'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/biblia'
     | '/importar'
     | '/sitemap.xml'
+    | '/api/adapt-sermon-stream'
     | '/api/analyze-sermon-stream'
     | '/api/generate-outline-stream'
     | '/editor/$id'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   BibliaRoute: typeof BibliaRoute
   ImportarRoute: typeof ImportarRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiAdaptSermonStreamRoute: typeof ApiAdaptSermonStreamRoute
   ApiAnalyzeSermonStreamRoute: typeof ApiAnalyzeSermonStreamRoute
   ApiGenerateOutlineStreamRoute: typeof ApiGenerateOutlineStreamRoute
   EditorIdRoute: typeof EditorIdRoute
@@ -193,6 +206,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAnalyzeSermonStreamRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/adapt-sermon-stream': {
+      id: '/api/adapt-sermon-stream'
+      path: '/api/adapt-sermon-stream'
+      fullPath: '/api/adapt-sermon-stream'
+      preLoaderRoute: typeof ApiAdaptSermonStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   BibliaRoute: BibliaRoute,
   ImportarRoute: ImportarRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiAdaptSermonStreamRoute: ApiAdaptSermonStreamRoute,
   ApiAnalyzeSermonStreamRoute: ApiAnalyzeSermonStreamRoute,
   ApiGenerateOutlineStreamRoute: ApiGenerateOutlineStreamRoute,
   EditorIdRoute: EditorIdRoute,
