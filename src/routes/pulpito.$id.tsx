@@ -46,6 +46,7 @@ function Pulpit() {
   const [enrichTopicState, setEnrichTopicState] = useState<Topic | null>(null);
   const [expandingId, setExpandingId] = useState<string | null>(null);
   const [appealOpen, setAppealOpen] = useState(false);
+  const [conclusionOpen, setConclusionOpen] = useState(false);
 
   const handleExpandTopic = async (topicId: string) => {
     if (!sermon) return;
@@ -339,13 +340,40 @@ function Pulpit() {
         </div>
 
         {sermon.conclusion && (
-          <div className="mt-8 rounded-2xl border-l-4 border-gold bg-card p-5 shadow-soft">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Conclusão</p>
-            <ClickableText
-              text={sermon.conclusion}
-              onWord={studyWord}
-              className="mt-2 text-lg leading-relaxed text-foreground"
-            />
+          <div className={cn(
+            "mt-8 overflow-hidden rounded-2xl border shadow-soft transition-colors",
+            conclusionOpen ? "border-gold/50" : "border-border",
+          )}>
+            <button
+              type="button"
+              onClick={() => setConclusionOpen(!conclusionOpen)}
+              aria-expanded={conclusionOpen}
+              className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left bg-card border-l-4 border-gold rounded-l-none"
+            >
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Conclusão</span>
+              <ChevronDown
+                className={cn(
+                  "size-5 shrink-0 text-gold transition-transform duration-300",
+                  conclusionOpen && "rotate-180",
+                )}
+              />
+            </button>
+            <div
+              className={cn(
+                "grid transition-all duration-300 ease-in-out",
+                conclusionOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="bg-card px-5 pb-5 pt-2 border-l-4 border-gold rounded-l-none">
+                  <ClickableText
+                    text={sermon.conclusion}
+                    onWord={studyWord}
+                    className="text-lg leading-relaxed text-foreground"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
