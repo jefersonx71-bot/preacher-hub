@@ -45,6 +45,7 @@ function Pulpit() {
   const [enrichOpen, setEnrichOpen] = useState(false);
   const [enrichTopicState, setEnrichTopicState] = useState<Topic | null>(null);
   const [expandingId, setExpandingId] = useState<string | null>(null);
+  const [appealOpen, setAppealOpen] = useState(false);
 
   const handleExpandTopic = async (topicId: string) => {
     if (!sermon) return;
@@ -349,22 +350,49 @@ function Pulpit() {
         )}
 
         {sermon.appeal && (
-          <div className="relative mt-4 rounded-2xl border-l-4 border-red-500 bg-red-500/5 dark:bg-red-500/10 p-5 pr-12 shadow-soft">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-red-500">Apelo (Decisão Prática)</p>
-            <ClickableText
-              text={sermon.appeal}
-              onWord={studyWord}
-              className="mt-2 text-lg leading-relaxed text-foreground font-medium italic"
-            />
+          <div className={cn(
+            "relative mt-4 overflow-hidden rounded-2xl border shadow-soft transition-colors",
+            appealOpen ? "border-red-500/50" : "border-border",
+          )}>
             <button
               type="button"
-              onClick={handleDeleteAppeal}
-              aria-label="Apagar apelo"
-              title="Apagar apelo"
-              className="absolute bottom-4 right-4 flex size-8 items-center justify-center rounded-full text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+              onClick={() => setAppealOpen(!appealOpen)}
+              aria-expanded={appealOpen}
+              className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left bg-red-500/5 dark:bg-red-500/10 border-l-4 border-red-500 rounded-l-none"
             >
-              <X className="size-5" />
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-red-500">Apelo (Decisão Prática)</span>
+              <ChevronDown
+                className={cn(
+                  "size-5 shrink-0 text-red-500 transition-transform duration-300",
+                  appealOpen && "rotate-180",
+                )}
+              />
             </button>
+            <div
+              className={cn(
+                "grid transition-all duration-300 ease-in-out",
+                appealOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="relative bg-red-500/5 dark:bg-red-500/10 px-5 pb-5 pt-2 pr-12 border-l-4 border-red-500 rounded-l-none">
+                  <ClickableText
+                    text={sermon.appeal}
+                    onWord={studyWord}
+                    className="text-lg leading-relaxed text-foreground font-medium italic"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleDeleteAppeal}
+                    aria-label="Apagar apelo"
+                    title="Apagar apelo"
+                    className="absolute bottom-4 right-4 flex size-8 items-center justify-center rounded-full text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                  >
+                    <X className="size-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
