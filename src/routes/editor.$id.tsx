@@ -26,6 +26,7 @@ import {
   type Sermon,
   type Topic,
 } from "@/lib/sermons";
+import { getApiUrl } from "@/lib/api-url";
 import { SortableTopic } from "@/components/SortableTopic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,7 +82,7 @@ function Editor() {
     setSteps(initialSteps);
 
     try {
-      const response = await fetch("/api/adapt-sermon-stream", {
+      const response = await fetch(getApiUrl("/api/adapt-sermon-stream"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sermon, audience, style }),

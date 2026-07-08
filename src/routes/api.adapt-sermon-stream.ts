@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { parseMarkdownToSermon } from "@/lib/parse-markdown";
+import { corsHeaders, handleCorsOptions } from "@/lib/cors";
 import type { Sermon } from "@/lib/sermons";
 
 export const Route = createFileRoute("/api/adapt-sermon-stream")({
   server: {
     handlers: {
+      OPTIONS: async () => handleCorsOptions(),
       POST: async ({ request }) => {
         try {
           const { sermon, audience, style } = (await request.json()) as {
@@ -18,7 +20,7 @@ export const Route = createFileRoute("/api/adapt-sermon-stream")({
               JSON.stringify({ error: "Sermão, público-alvo e estilo homilético são obrigatórios." }),
               {
                 status: 400,
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", ...corsHeaders },
               }
             );
           }
@@ -308,6 +310,7 @@ Se você, como parte do grupo de ${audience}, deseja responder a esta palavra e 
               "Content-Type": "text/event-stream",
               "Cache-Control": "no-cache",
               "Connection": "keep-alive",
+              ...corsHeaders,
             },
           });
         } catch (error: any) {
@@ -316,7 +319,7 @@ Se você, como parte do grupo de ${audience}, deseja responder a esta palavra e 
             JSON.stringify({ error: error.message || "Erro interno no servidor." }),
             {
               status: 500,
-              headers: { "Content-Type": "application/json" },
+              headers: { "Content-Type": "application/json", ...corsHeaders },
             }
           );
         }

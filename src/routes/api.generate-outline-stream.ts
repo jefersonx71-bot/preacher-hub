@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { parseMarkdownToSermon } from "@/lib/parse-markdown";
+import { corsHeaders, handleCorsOptions } from "@/lib/cors";
 
 export const Route = createFileRoute("/api/generate-outline-stream")({
   server: {
     handlers: {
+      OPTIONS: async () => handleCorsOptions(),
       POST: async ({ request }) => {
         try {
           const { topic, passage, audience, style } = (await request.json()) as {
@@ -16,7 +18,7 @@ export const Route = createFileRoute("/api/generate-outline-stream")({
           if (!topic || !passage) {
             return new Response(JSON.stringify({ error: "Tema e passagem são obrigatórios." }), {
               status: 400,
-              headers: { "Content-Type": "application/json" },
+              headers: { "Content-Type": "application/json", ...corsHeaders },
             });
           }
 
@@ -286,18 +288,26 @@ Se você reconhece que suas forças se esgotaram e quer a unção do Espírito p
             },
           });
 
-          return new Response(stream, {
-            headers: {
-              "Content-Type": "text/event-stream",
-              "Cache-Control": "no-cache",
-              "Connection": "keep-alive",
-            },
+            return new Response(stream, {
+              headers: {
+                "Content-Type": "text/event-stream",
+                "Cache-Control": "no-cache",
+                Connection: "keep-alive",
+                ...corsHeaders,
+              },
+            });
+          }
+
+          // Retorno JSON normal (se não for streaming)
+          const data = await response.json();
+          return new Response(JSON.stringify(data), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
           });
         } catch (error: any) {
-          console.error("Outer route error:", error);
-          return new Response(JSON.stringify({ error: error.message || "Erro interno no servidor." }), {
+          console.error("Erro no proxy da API:", error);
+          return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...corsHeaders },
           });
         }
       },

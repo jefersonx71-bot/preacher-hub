@@ -1,17 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { parseMarkdownToSermon } from "@/lib/parse-markdown";
+import { corsHeaders, handleCorsOptions } from "@/lib/cors";
 
 export const Route = createFileRoute("/api/analyze-sermon-stream")({
   server: {
     handlers: {
+      OPTIONS: async () => handleCorsOptions(),
       POST: async ({ request }) => {
         try {
           const { text } = (await request.json()) as { text: string };
 
           if (!text || text.trim().length < 40) {
-            return new Response(JSON.stringify({ error: "O texto enviado é muito curto." }), {
+            return new Response(JSON.stringify({ error: "Sermão é obrigatório para análise." }), {
               status: 400,
-              headers: { "Content-Type": "application/json" },
+              headers: { "Content-Type": "application/json", ...corsHeaders },
             });
           }
 
@@ -286,13 +288,14 @@ Se você quer quebrar o orgulho da autossuficiência e declarar sua dependência
               "Content-Type": "text/event-stream",
               "Cache-Control": "no-cache",
               "Connection": "keep-alive",
+              ...corsHeaders,
             },
           });
         } catch (error: any) {
           console.error("Outer route error:", error);
           return new Response(JSON.stringify({ error: error.message || "Erro interno no servidor." }), {
             status: 500,
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...corsHeaders },
           });
         }
       },

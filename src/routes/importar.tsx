@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { getApiUrl } from "@/lib/api-url";
 
 export const Route = createFileRoute("/importar")({
   head: () => ({
@@ -197,7 +198,7 @@ function ImportPage() {
     setExpandedThoughtId(null);
 
     try {
-      const response = await fetch("/api/generate-outline-stream", {
+      const response = await fetch(getApiUrl("/api/generate-outline-stream"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -241,7 +242,7 @@ function ImportPage() {
     setExpandedThoughtId(null);
 
     try {
-      const response = await fetch("/api/analyze-sermon-stream", {
+      const response = await fetch(getApiUrl("/api/analyze-sermon-stream"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: text.trim() }),
