@@ -587,54 +587,7 @@ function BiblePage() {
               </div>
             </div>
 
-            {/* Gerenciar Modo Offline */}
-            <div className="mt-4 rounded-xl border border-border bg-card/50 p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground flex items-center gap-1.5">
-                  <BookOpen className="size-4 text-gold" /> Uso Offline da Bíblia
-                </h3>
-                <span className="text-[10px] text-muted-foreground uppercase font-bold">
-                  {typeof navigator !== "undefined" && navigator.onLine ? "Online" : "Modo Offline"}
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Baixe as traduções abaixo para que a leitura e comparação versículo a versículo funcionem no púlpito mesmo sem internet.
-              </p>
-              <div className="grid gap-2 sm:grid-cols-2">
-                {BIBLE_VERSIONS.map((v) => {
-                  const isCached = cachedVersions[v.id];
-                  const isDownloading = downloadingVersion === v.id;
-                  
-                  return (
-                    <div key={v.id} className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-background/50 text-xs">
-                      <div>
-                        <span className="font-semibold text-foreground uppercase">{v.label}</span>
-                        <span className="text-muted-foreground ml-1.5">({v.fullName})</span>
-                      </div>
-                      
-                      {isCached ? (
-                        <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                          Salvo Offline
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => downloadVersion(v.id)}
-                          disabled={isDownloading}
-                          className="font-semibold text-gold hover:underline cursor-pointer flex items-center gap-1 disabled:opacity-50"
-                        >
-                          {isDownloading ? (
-                            <Loader2 className="size-3 animate-spin" />
-                          ) : (
-                            "Baixar"
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+
 
             {/* Reference */}
             <h1 className="mt-6 font-display text-2xl font-semibold text-foreground">
@@ -714,6 +667,60 @@ function BiblePage() {
             <p className="mt-10 text-center text-xs text-muted-foreground">
               Textos bíblicos em português para estudo e comparação.
             </p>
+
+            {/* Gerenciar Modo Offline - Movido para o final da página */}
+            <details className="mt-8 mb-8 rounded-xl border border-border bg-card/50 group">
+              <summary className="flex items-center justify-between p-4 cursor-pointer list-none outline-none">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground flex items-center gap-1.5">
+                  <BookOpen className="size-4 text-gold" /> Uso Offline da Bíblia
+                </h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold">
+                    {typeof navigator !== "undefined" && navigator.onLine ? "Online" : "Modo Offline"}
+                  </span>
+                  <ChevronRight className="size-4 text-muted-foreground transition-transform group-open:rotate-90" />
+                </div>
+              </summary>
+              <div className="p-4 pt-0 space-y-3 border-t border-border/50">
+                <p className="text-xs text-muted-foreground">
+                  Baixe as traduções abaixo para que a leitura e comparação versículo a versículo funcionem no púlpito mesmo sem internet.
+                </p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                {BIBLE_VERSIONS.map((v) => {
+                  const isCached = cachedVersions[v.id];
+                  const isDownloading = downloadingVersion === v.id;
+                  
+                  return (
+                    <div key={v.id} className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-background/50 text-xs">
+                      <div>
+                        <span className="font-semibold text-foreground uppercase">{v.label}</span>
+                        <span className="text-muted-foreground ml-1.5">({v.fullName})</span>
+                      </div>
+                      
+                      {isCached ? (
+                        <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                          Salvo Offline
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => downloadVersion(v.id)}
+                          disabled={isDownloading}
+                          className="font-semibold text-gold hover:underline cursor-pointer flex items-center gap-1 disabled:opacity-50"
+                        >
+                          {isDownloading ? (
+                            <Loader2 className="size-3 animate-spin" />
+                          ) : (
+                            "Baixar"
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              </div>
+            </details>
           </TabsContent>
 
           <TabsContent value="study" className="space-y-6">
