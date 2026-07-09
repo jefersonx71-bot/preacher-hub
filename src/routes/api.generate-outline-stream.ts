@@ -92,7 +92,7 @@ Estilo Homilético: ${style}`;
           // Prepare the stream response
           const stream = new ReadableStream({
             async start(controller) {
-              const send = (data: any) => {
+              const send = (data: unknown) => {
                 controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
               };
 
@@ -279,9 +279,9 @@ Se você reconhece que suas forças se esgotaram e quer a unção do Espírito p
                 });
 
                 send({ type: "done" });
-              } catch (e: any) {
+              } catch (e: unknown) {
                 console.error("Stream generation error:", e);
-                send({ type: "error", message: e.message || "Falha desconhecida no stream." });
+                send({ type: "error", message: e instanceof Error ? e.message : "Falha desconhecida no stream." });
               } finally {
                 controller.close();
               }
@@ -292,20 +292,14 @@ Se você reconhece que suas forças se esgotaram e quer a unção do Espírito p
               headers: {
                 "Content-Type": "text/event-stream",
                 "Cache-Control": "no-cache",
-                Connection: "keep-alive",
+                "Connection": "keep-alive",
                 ...corsHeaders,
               },
             });
-          }
 
-          // Retorno JSON normal (se não for streaming)
-          const data = await response.json();
-          return new Response(JSON.stringify(data), {
-            headers: { "Content-Type": "application/json", ...corsHeaders },
-          });
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error("Erro no proxy da API:", error);
-          return new Response(JSON.stringify({ error: error.message }), {
+          return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Erro desconhecido" }), {
             status: 500,
             headers: { "Content-Type": "application/json", ...corsHeaders },
           });
