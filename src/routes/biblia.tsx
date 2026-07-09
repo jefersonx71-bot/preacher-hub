@@ -559,33 +559,7 @@ function BiblePage() {
               </div>
             </div>
 
-            {/* Version selector */}
-            <div className="mt-4">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                Versões em português para comparar (até 4)
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {BIBLE_VERSIONS.map((v) => {
-                  const active = versions.includes(v.id);
-                  return (
-                    <button
-                      key={v.id}
-                      type="button"
-                      onClick={() => toggleVersion(v.id)}
-                      className={cn(
-                        "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
-                        active
-                          ? "border-transparent bg-gold text-gold-foreground"
-                          : "border-border bg-card text-muted-foreground hover:text-foreground",
-                      )}
-                    >
-                      {v.label}
-                      <span className="ml-1.5 text-xs opacity-70">{v.fullName}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+
 
 
 
@@ -667,6 +641,34 @@ function BiblePage() {
             <p className="mt-10 text-center text-xs text-muted-foreground">
               Textos bíblicos em português para estudo e comparação.
             </p>
+
+            {/* Version selector - Movido para baixo */}
+            <div className="mt-8 flex flex-col items-center justify-center text-center">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                Versões em português para comparar (até 4)
+              </p>
+              <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
+                {BIBLE_VERSIONS.map((v) => {
+                  const active = versions.includes(v.id);
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onClick={() => toggleVersion(v.id)}
+                      className={cn(
+                        "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
+                        active
+                          ? "border-transparent bg-gold text-gold-foreground"
+                          : "border-border bg-card text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {v.label}
+                      <span className="ml-1.5 text-xs opacity-70">{v.fullName}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
             {/* Gerenciar Modo Offline - Movido para o final da página */}
             <details className="mt-8 mb-8 rounded-xl border border-border bg-card/50 group">
