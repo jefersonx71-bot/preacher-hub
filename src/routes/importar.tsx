@@ -1,6 +1,23 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Loader2, Sparkles, Wand2, Copy, Check, Save, RefreshCw, AlertCircle, FileText, Users, Brain, ChevronDown, ChevronUp, Terminal, BookOpen } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader2,
+  Sparkles,
+  Wand2,
+  Copy,
+  Check,
+  Save,
+  RefreshCw,
+  AlertCircle,
+  FileText,
+  Users,
+  Brain,
+  ChevronDown,
+  ChevronUp,
+  Terminal,
+  BookOpen,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useSermons } from "@/lib/sermons";
 import { Button } from "@/components/ui/button";
@@ -51,21 +68,30 @@ function SimpleMarkdown({ text }: { text: string }) {
         const trimmed = line.trim();
         if (trimmed.startsWith("# ")) {
           return (
-            <h1 key={idx} className="font-display text-2xl font-bold tracking-tight text-foreground mt-6 mb-3 border-b border-border/50 pb-2">
+            <h1
+              key={idx}
+              className="font-display text-2xl font-bold tracking-tight text-foreground mt-6 mb-3 border-b border-border/50 pb-2"
+            >
               {trimmed.replace("# ", "")}
             </h1>
           );
         }
         if (trimmed.startsWith("## ")) {
           return (
-            <h2 key={idx} className="font-display text-lg font-semibold tracking-tight text-foreground mt-5 mb-2">
+            <h2
+              key={idx}
+              className="font-display text-lg font-semibold tracking-tight text-foreground mt-5 mb-2"
+            >
               {trimmed.replace("## ", "")}
             </h2>
           );
         }
         if (trimmed.startsWith("### ")) {
           return (
-            <h3 key={idx} className="font-display text-base font-semibold text-foreground mt-4 mb-2 text-gold">
+            <h3
+              key={idx}
+              className="font-display text-base font-semibold text-foreground mt-4 mb-2 text-gold"
+            >
               {trimmed.replace("### ", "")}
             </h3>
           );
@@ -89,7 +115,11 @@ function SimpleMarkdown({ text }: { text: string }) {
         if (!trimmed) {
           return <div key={idx} className="h-2.5" />;
         }
-        return <p key={idx} className="my-2">{parseBoldText(trimmed)}</p>;
+        return (
+          <p key={idx} className="my-2">
+            {parseBoldText(trimmed)}
+          </p>
+        );
       })}
     </div>
   );
@@ -190,9 +220,24 @@ function ImportPage() {
     resetFlowStates();
 
     const initialSteps: GenerationStep[] = [
-      { id: "investigating", title: "Investigando Contexto e Escrituras", message: "Conectando ao banco de dados exegético da Palavra...", status: "pending" },
-      { id: "thinking", title: "Raciocínio Homilético (CoT)", message: "Aguardando investigação concluir...", status: "pending" },
-      { id: "drafting", title: "Redigindo Mensagem no Modo Jeff", message: "Aguardando estruturação...", status: "pending" }
+      {
+        id: "investigating",
+        title: "Investigando Contexto e Escrituras",
+        message: "Conectando ao banco de dados exegético da Palavra...",
+        status: "pending",
+      },
+      {
+        id: "thinking",
+        title: "Raciocínio Homilético (CoT)",
+        message: "Aguardando investigação concluir...",
+        status: "pending",
+      },
+      {
+        id: "drafting",
+        title: "Redigindo Mensagem no Modo Jeff",
+        message: "Aguardando estruturação...",
+        status: "pending",
+      },
     ];
     setSteps(initialSteps);
     setExpandedThoughtId(null);
@@ -205,7 +250,7 @@ function ImportPage() {
           topic: topic.trim(),
           passage: passage.trim(),
           audience,
-          style
+          style,
         }),
       });
 
@@ -234,9 +279,24 @@ function ImportPage() {
     resetFlowStates();
 
     const initialSteps: GenerationStep[] = [
-      { id: "investigating", title: "Analisando Notas Fornecidas", message: "Analisando referências e extraindo as passagens citadas...", status: "pending" },
-      { id: "thinking", title: "Modelagem Homilética (CoT)", message: "Aguardando análise de notas iniciar...", status: "pending" },
-      { id: "drafting", title: "Estruturando Rascunho no Modo Jeff", message: "Aguardando estruturação...", status: "pending" }
+      {
+        id: "investigating",
+        title: "Analisando Notas Fornecidas",
+        message: "Analisando referências e extraindo as passagens citadas...",
+        status: "pending",
+      },
+      {
+        id: "thinking",
+        title: "Modelagem Homilética (CoT)",
+        message: "Aguardando análise de notas iniciar...",
+        status: "pending",
+      },
+      {
+        id: "drafting",
+        title: "Estruturando Rascunho no Modo Jeff",
+        message: "Aguardando estruturação...",
+        status: "pending",
+      },
     ];
     setSteps(initialSteps);
     setExpandedThoughtId(null);
@@ -305,7 +365,7 @@ function ImportPage() {
                   return { ...s, status: "completed" };
                 }
                 return s;
-              })
+              }),
             );
             if (event.thought) {
               setExpandedThoughtId(event.id);
@@ -320,7 +380,7 @@ function ImportPage() {
                   return { ...s, status: "running", message: "Escrevendo o esboço..." };
                 }
                 return s;
-              })
+              }),
             );
             setResult((prev) => prev + event.text);
           } else if (event.type === "sermon") {
@@ -364,7 +424,8 @@ function ImportPage() {
             Assistente de Homilética
           </h1>
           <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
-            Sua central de apoio ministerial. Escolha entre gerar um sermão completo do zero contendo ilustrações ideais ou reestruturar as notas que você já rascunhou.
+            Sua central de apoio ministerial. Escolha entre gerar um sermão completo do zero
+            contendo ilustrações ideais ou reestruturar as notas que você já rascunhou.
           </p>
         </div>
 
@@ -407,7 +468,10 @@ function ImportPage() {
               /* CREATE MODE FORM (Copiloto) */
               <form onSubmit={handleGenerateFromScratch} className="space-y-4 text-left">
                 <div className="space-y-1.5">
-                  <Label htmlFor="ai-topic" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <Label
+                    htmlFor="ai-topic"
+                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                  >
                     Tema ou Tópico Principal *
                   </Label>
                   <Input
@@ -422,7 +486,10 @@ function ImportPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="ai-passage" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <Label
+                    htmlFor="ai-passage"
+                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                  >
                     Passagem Bíblica Chave *
                   </Label>
                   <Input
@@ -437,7 +504,10 @@ function ImportPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="ai-audience" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Label
+                    htmlFor="ai-audience"
+                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5"
+                  >
                     <Users size={12} className="text-muted-foreground" /> Público Alvo
                   </Label>
                   <select
@@ -451,12 +521,17 @@ function ImportPage() {
                     <option value="Jovens e Adolescentes">Jovens e Adolescentes</option>
                     <option value="Casais e Famílias">Casais e Famílias</option>
                     <option value="Líderes e Obreiros">Líderes e Obreiros</option>
-                    <option value="Não Cristãos / Evangelístico">Não Cristãos / Evangelístico</option>
+                    <option value="Não Cristãos / Evangelístico">
+                      Não Cristãos / Evangelístico
+                    </option>
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="ai-style" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Label
+                    htmlFor="ai-style"
+                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5"
+                  >
                     <Brain size={12} className="text-muted-foreground" /> Estilo Homilético
                   </Label>
                   <select
@@ -503,7 +578,10 @@ function ImportPage() {
               /* RESTRUCTURE MODE FORM (Esboço Inteligente) */
               <form onSubmit={handleAnalyzeText} className="space-y-4 text-left">
                 <div className="space-y-1.5">
-                  <Label htmlFor="pasted-sermon" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <Label
+                    htmlFor="pasted-sermon"
+                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                  >
                     Anotações / Notas Brutas
                   </Label>
                   <Textarea
@@ -557,7 +635,10 @@ function ImportPage() {
           <div className="lg:col-span-7 space-y-6">
             {/* AGENT STEPS PROGRESS BAR */}
             {(loading || result) && steps.length > 0 && (
-              <div id="antigravity-timeline" className="bg-zinc-950 text-zinc-100 rounded-2xl p-5 border border-zinc-800 shadow-xl space-y-4 text-left animate-in fade-in duration-300">
+              <div
+                id="antigravity-timeline"
+                className="bg-zinc-950 text-zinc-100 rounded-2xl p-5 border border-zinc-800 shadow-xl space-y-4 text-left animate-in fade-in duration-300"
+              >
                 <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
                   <div className="flex items-center gap-2">
                     <Terminal size={14} className="text-gold" />
@@ -605,9 +686,15 @@ function ImportPage() {
 
                           {/* Step info */}
                           <div className="space-y-0.5 text-left">
-                            <h5 className={`text-xs font-bold leading-normal ${
-                              isCompleted ? "text-zinc-400" : isRunning ? "text-white" : "text-zinc-650"
-                            }`}>
+                            <h5
+                              className={`text-xs font-bold leading-normal ${
+                                isCompleted
+                                  ? "text-zinc-400"
+                                  : isRunning
+                                    ? "text-white"
+                                    : "text-zinc-650"
+                              }`}
+                            >
                               {step.title}
                             </h5>
                             <p className="text-[11px] text-zinc-450 leading-relaxed font-medium">
@@ -621,17 +708,27 @@ function ImportPage() {
                           <div className="ml-8 border-l border-zinc-800 pl-4 py-1">
                             <button
                               type="button"
-                              onClick={() => setExpandedThoughtId(expandedThoughtId === step.id ? null : step.id)}
+                              onClick={() =>
+                                setExpandedThoughtId(expandedThoughtId === step.id ? null : step.id)
+                              }
                               className="flex items-center gap-1.5 text-[10.5px] font-semibold text-gold hover:text-gold/80 transition-colors select-none cursor-pointer"
                             >
                               <Brain size={11} className="animate-pulse" />
-                              {expandedThoughtId === step.id ? "Ocultar Processo Cognitivo" : "Visualizar Processo Cognitivo (CoT)"}
-                              {expandedThoughtId === step.id ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
+                              {expandedThoughtId === step.id
+                                ? "Ocultar Processo Cognitivo"
+                                : "Visualizar Processo Cognitivo (CoT)"}
+                              {expandedThoughtId === step.id ? (
+                                <ChevronUp size={11} />
+                              ) : (
+                                <ChevronDown size={11} />
+                              )}
                             </button>
-                            
+
                             {expandedThoughtId === step.id && (
                               <div className="mt-2 bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 font-mono text-[11px] text-zinc-300 leading-relaxed text-left whitespace-pre-wrap max-h-48 overflow-y-auto">
-                                <span className="text-gold font-bold block mb-1.5">=== AGENT THINKING TRACE ===</span>
+                                <span className="text-gold font-bold block mb-1.5">
+                                  === AGENT THINKING TRACE ===
+                                </span>
                                 {step.thought}
                               </div>
                             )}
@@ -647,13 +744,18 @@ function ImportPage() {
             {/* MAIN CONTENT CONTAINER */}
             {loading && !result ? (
               /* Loading screen */
-              <div id="ai-loading-stage" className="bg-card border border-border rounded-2xl p-12 text-center space-y-6 shadow-soft min-h-[300px] flex flex-col items-center justify-center animate-pulse">
+              <div
+                id="ai-loading-stage"
+                className="bg-card border border-border rounded-2xl p-12 text-center space-y-6 shadow-soft min-h-[300px] flex flex-col items-center justify-center animate-pulse"
+              >
                 <div className="relative flex items-center justify-center">
                   <div className="w-12 h-12 rounded-full border-4 border-gold/15 border-t-gold animate-spin"></div>
                   <Sparkles className="absolute text-gold animate-pulse" size={18} />
                 </div>
                 <div className="space-y-1.5">
-                  <h4 className="font-display font-semibold text-foreground text-base">Invocando Inteligência Teológica</h4>
+                  <h4 className="font-display font-semibold text-foreground text-base">
+                    Invocando Inteligência Teológica
+                  </h4>
                   <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
                     Sincronizando as diretrizes da homilética com as escrituras sagradas...
                   </p>
@@ -661,14 +763,17 @@ function ImportPage() {
               </div>
             ) : result ? (
               /* Sermon Output Card */
-              <div id="ai-result-panel" className="bg-card border border-border rounded-2xl shadow-soft flex flex-col overflow-hidden max-h-[82vh] animate-in fade-in duration-300">
+              <div
+                id="ai-result-panel"
+                className="bg-card border border-border rounded-2xl shadow-soft flex flex-col overflow-hidden max-h-[82vh] animate-in fade-in duration-300"
+              >
                 {/* Header Toolbar */}
                 <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-secondary/35">
                   <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-                    <Sparkles size={12} className="text-gold animate-pulse" /> 
+                    <Sparkles size={12} className="text-gold animate-pulse" />
                     {loading ? "Transmitindo Esboço..." : "Esboço Pronto"}
                   </span>
-                  
+
                   <div className="flex items-center gap-2">
                     <Button
                       id="btn-copy-ai-result"
@@ -709,23 +814,31 @@ function ImportPage() {
                 <div className="flex-1 overflow-y-auto p-4 md:p-5 bg-secondary/15">
                   <div className="max-w-2xl mx-auto bg-card border border-border rounded-xl p-5 md:p-6 shadow-soft text-left relative">
                     <SimpleMarkdown text={result} />
-                    
+
                     {loading && (
-                      <span className="inline-block w-2 bg-gold animate-pulse h-4 ml-1 align-middle" title="Gerando..." />
+                      <span
+                        className="inline-block w-2 bg-gold animate-pulse h-4 ml-1 align-middle"
+                        title="Gerando..."
+                      />
                     )}
                   </div>
                 </div>
               </div>
             ) : (
               /* Idle state */
-              <div id="ai-blank-state" className="bg-card border border-dashed border-border rounded-2xl p-16 text-center text-muted-foreground min-h-[450px] flex flex-col items-center justify-center space-y-4 shadow-soft">
+              <div
+                id="ai-blank-state"
+                className="bg-card border border-dashed border-border rounded-2xl p-16 text-center text-muted-foreground min-h-[450px] flex flex-col items-center justify-center space-y-4 shadow-soft"
+              >
                 <div className="p-4 rounded-full bg-gold/5 border border-gold/10 text-gold">
                   <Sparkles size={32} />
                 </div>
                 <div className="max-w-xs space-y-1.5">
-                  <h3 className="font-display font-semibold text-foreground text-base">Pronto para inspirar?</h3>
+                  <h3 className="font-display font-semibold text-foreground text-base">
+                    Pronto para inspirar?
+                  </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    {activeMode === "create" 
+                    {activeMode === "create"
                       ? "Preencha o tema e a passagem bíblica à esquerda para gerar uma estrutura rica com introdução cativante, tópicos bem delineados e aplicações homiléticas."
                       : "Insira suas notas ou rascunhos soltos para que a nossa inteligência homilética as organize de forma polida mantendo sua essência espiritual."}
                   </p>

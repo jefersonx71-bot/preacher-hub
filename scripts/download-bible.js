@@ -1,19 +1,19 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TARGET_DIR = path.join(__dirname, '..', 'src', 'lib', 'bible-data');
+const TARGET_DIR = path.join(__dirname, "..", "src", "lib", "bible-data");
 
 const BIBLE_VERSIONS = [
-  { id: 'nvi', url: 'https://cdn.jsdelivr.net/gh/thiagobodruk/biblia@master/json/nvi.json' },
-  { id: 'acf', url: 'https://cdn.jsdelivr.net/gh/thiagobodruk/biblia@master/json/acf.json' },
-  { id: 'aa', url: 'https://cdn.jsdelivr.net/gh/thiagobodruk/biblia@master/json/aa.json' },
-  { id: 'ntlh', url: 'https://cdn.jsdelivr.net/gh/damarals/biblias@master/inst/json/NTLH.json' },
-  { id: 'nvt', url: 'https://cdn.jsdelivr.net/gh/damarals/biblias@master/inst/json/NVT.json' },
-  { id: 'naa', url: 'https://cdn.jsdelivr.net/gh/damarals/biblias@master/inst/json/NAA.json' }
+  { id: "nvi", url: "https://cdn.jsdelivr.net/gh/thiagobodruk/biblia@master/json/nvi.json" },
+  { id: "acf", url: "https://cdn.jsdelivr.net/gh/thiagobodruk/biblia@master/json/acf.json" },
+  { id: "aa", url: "https://cdn.jsdelivr.net/gh/thiagobodruk/biblia@master/json/aa.json" },
+  { id: "ntlh", url: "https://cdn.jsdelivr.net/gh/damarals/biblias@master/inst/json/NTLH.json" },
+  { id: "nvt", url: "https://cdn.jsdelivr.net/gh/damarals/biblias@master/inst/json/NVT.json" },
+  { id: "naa", url: "https://cdn.jsdelivr.net/gh/damarals/biblias@master/inst/json/NAA.json" },
 ];
 
 async function downloadFile(url, destPath) {
@@ -23,7 +23,7 @@ async function downloadFile(url, destPath) {
   }
   let text = await res.text();
   // Strip BOM if present
-  if (text.charCodeAt(0) === 0xFEFF) {
+  if (text.charCodeAt(0) === 0xfeff) {
     text = text.slice(1);
   }
   // Validate that it parses as JSON
@@ -32,11 +32,11 @@ async function downloadFile(url, destPath) {
   } catch (err) {
     throw new Error(`Invalid JSON format downloaded from ${url}: ${err.message}`);
   }
-  fs.writeFileSync(destPath, text, 'utf8');
+  fs.writeFileSync(destPath, text, "utf8");
 }
 
 async function run() {
-  console.log('Starting Bible dataset download...');
+  console.log("Starting Bible dataset download...");
   if (!fs.existsSync(TARGET_DIR)) {
     console.log(`Creating directory: ${TARGET_DIR}`);
     fs.mkdirSync(TARGET_DIR, { recursive: true });
@@ -53,7 +53,7 @@ async function run() {
       process.exit(1);
     }
   }
-  console.log('All Bible versions downloaded successfully and saved locally!');
+  console.log("All Bible versions downloaded successfully and saved locally!");
 }
 
 run();

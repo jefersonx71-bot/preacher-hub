@@ -79,21 +79,41 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "PregaDynamic — Esboços de Pregação" },
-      { name: "description", content: "Organize seus esboços de pregação com sumários retráteis e um Modo Púlpito dinâmico para o momento da mensagem." },
+      {
+        name: "description",
+        content:
+          "Organize seus esboços de pregação com sumários retráteis e um Modo Púlpito dinâmico para o momento da mensagem.",
+      },
       { name: "author", content: "PregaDynamic" },
       { name: "theme-color", content: "#060b13" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "PregaDynamic" },
       { property: "og:title", content: "PregaDynamic — Esboços de Pregação" },
-      { property: "og:description", content: "Organize seus esboços de pregação com sumários retráteis e um Modo Púlpito dinâmico para o momento da mensagem." },
+      {
+        property: "og:description",
+        content:
+          "Organize seus esboços de pregação com sumários retráteis e um Modo Púlpito dinâmico para o momento da mensagem.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "PregaDynamic — Esboços de Pregação" },
-      { name: "twitter:description", content: "Organize seus esboços de pregação com sumários retráteis e um Modo Púlpito dinâmico para o momento da mensagem." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d281c731-ede5-4fe2-aeb8-25e7dbc74e31/id-preview-448f2013--416c9567-eb3e-424f-8771-dca1edb8d9fd.lovable.app-1780429330572.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d281c731-ede5-4fe2-aeb8-25e7dbc74e31/id-preview-448f2013--416c9567-eb3e-424f-8771-dca1edb8d9fd.lovable.app-1780429330572.png" },
+      {
+        name: "twitter:description",
+        content:
+          "Organize seus esboços de pregação com sumários retráteis e um Modo Púlpito dinâmico para o momento da mensagem.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d281c731-ede5-4fe2-aeb8-25e7dbc74e31/id-preview-448f2013--416c9567-eb3e-424f-8771-dca1edb8d9fd.lovable.app-1780429330572.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d281c731-ede5-4fe2-aeb8-25e7dbc74e31/id-preview-448f2013--416c9567-eb3e-424f-8771-dca1edb8d9fd.lovable.app-1780429330572.png",
+      },
     ],
     links: [
       {

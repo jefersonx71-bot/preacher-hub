@@ -17,11 +17,13 @@ export const Route = createFileRoute("/api/adapt-sermon-stream")({
 
           if (!sermon || !audience || !style) {
             return new Response(
-              JSON.stringify({ error: "Sermão, público-alvo e estilo homilético são obrigatórios." }),
+              JSON.stringify({
+                error: "Sermão, público-alvo e estilo homilético são obrigatórios.",
+              }),
               {
                 status: 400,
                 headers: { "Content-Type": "application/json", ...corsHeaders },
-              }
+              },
             );
           }
 
@@ -180,7 +182,7 @@ Estilo Homilético Desejado: "${style}"
                 if (!apiKey) {
                   // Fallback offline simulated stream
                   console.warn("Sem chave de API configurada. Usando simulador offline.");
-                  
+
                   const mockMarkdown = `# ${sermon.title} (Adaptado para ${audience})
 
 **Versículo Base:** ${sermon.baseVerse}
@@ -192,13 +194,15 @@ Esta é uma versão reescrita de sua mensagem. Adaptamos a introdução original
 
 ## Desenvolvimento
 
-${sermon.topics.map((t, idx) => {
-  return `### ${idx + 1}. ${t.title}
+${sermon.topics
+  .map((t, idx) => {
+    return `### ${idx + 1}. ${t.title}
 • O texto bíblico nos ensina que a dependência do Senhor supera as dificuldades. Esta verdade se aplica às nossas vidas.
 • Aplicação prática para ${audience}: No seu cotidiano e nos seus desafios específicos como ${audience}, lembre-se de exercitar a fé prática no seu ambiente.
 • Frase de impacto 1: "O processo não destrói o seu propósito; ele apenas treina o seu caráter para recebê-lo."
 • Frase de impacto 2: "Deus não unge a nossa força independente, Ele unge a nossa dependência quebrantada."`;
-}).join("\n\n")}
+  })
+  .join("\n\n")}
 
 ## Conclusão
 Em conclusão, esta mensagem adaptada nos chama a viver uma fé ativa. Sob o estilo homilético ${style}, a lição final é clara: confie no Senhor.
@@ -309,7 +313,7 @@ Se você, como parte do grupo de ${audience}, deseja responder a esta palavra e 
             headers: {
               "Content-Type": "text/event-stream",
               "Cache-Control": "no-cache",
-              "Connection": "keep-alive",
+              Connection: "keep-alive",
               ...corsHeaders,
             },
           });
@@ -320,7 +324,7 @@ Se você, como parte do grupo de ${audience}, deseja responder a esta palavra e 
             {
               status: 500,
               headers: { "Content-Type": "application/json", ...corsHeaders },
-            }
+            },
           );
         }
       },

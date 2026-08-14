@@ -15,7 +15,19 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { ArrowLeft, Check, Plus, Presentation, Sparkles, RefreshCw, Terminal, Brain, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  Plus,
+  Presentation,
+  Sparkles,
+  RefreshCw,
+  Terminal,
+  Brain,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   ALL_TAGS,
@@ -75,9 +87,24 @@ function Editor() {
     setLoading(true);
     setExpandedThoughtId(null);
     const initialSteps = [
-      { id: "investigating", title: "Analisando Esboço Atual", message: `Avaliando as passagens e estrutura de "${sermon.title}"...`, status: "pending" },
-      { id: "thinking", title: "Raciocínio de Adaptação (CoT)", message: "Aguardando análise terminar...", status: "pending" },
-      { id: "drafting", title: "Reescrevendo sob Nova Perspectiva", message: "Aguardando estruturação...", status: "pending" }
+      {
+        id: "investigating",
+        title: "Analisando Esboço Atual",
+        message: `Avaliando as passagens e estrutura de "${sermon.title}"...`,
+        status: "pending",
+      },
+      {
+        id: "thinking",
+        title: "Raciocínio de Adaptação (CoT)",
+        message: "Aguardando análise terminar...",
+        status: "pending",
+      },
+      {
+        id: "drafting",
+        title: "Reescrevendo sob Nova Perspectiva",
+        message: "Aguardando estruturação...",
+        status: "pending",
+      },
     ];
     setSteps(initialSteps);
 
@@ -134,7 +161,7 @@ function Editor() {
                     return { ...s, status: "completed" };
                   }
                   return s;
-                })
+                }),
               );
               if (event.thought) {
                 setExpandedThoughtId(event.id);
@@ -149,7 +176,7 @@ function Editor() {
                     return { ...s, status: "running", message: "Escrevendo o esboço adaptado..." };
                   }
                   return s;
-                })
+                }),
               );
               accumulatedResult += event.text;
             } else if (event.type === "sermon") {
@@ -292,7 +319,9 @@ function Editor() {
             {showAiPanel && (
               <div className="space-y-4 pt-2 border-t border-gold/10 animate-in fade-in duration-205">
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Reescreva as ilustrações, linguagem e aplicações deste esboço sob medida para um público-alvo ou estilo homilético diferente. As alterações serão aplicadas diretamente nos campos abaixo após a geração.
+                  Reescreva as ilustrações, linguagem e aplicações deste esboço sob medida para um
+                  público-alvo ou estilo homilético diferente. As alterações serão aplicadas
+                  diretamente nos campos abaixo após a geração.
                 </p>
 
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -310,7 +339,9 @@ function Editor() {
                       <option value="Jovens e Adolescentes">Jovens e Adolescentes</option>
                       <option value="Casais e Famílias">Casais e Famílias</option>
                       <option value="Líderes e Obreiros">Líderes e Obreiros</option>
-                      <option value="Não Cristãos / Evangelístico">Não Cristãos / Evangelístico</option>
+                      <option value="Não Cristãos / Evangelístico">
+                        Não Cristãos / Evangelístico
+                      </option>
                     </select>
                   </div>
 
@@ -355,7 +386,12 @@ function Editor() {
                                 {isCompleted ? "✓" : isRunning ? "⏳" : "•"}
                               </span>
                               <div className="space-y-0.5 text-left">
-                                <h5 className={cn("font-bold text-[11px]", isCompleted ? "text-zinc-550" : "text-zinc-300")}>
+                                <h5
+                                  className={cn(
+                                    "font-bold text-[11px]",
+                                    isCompleted ? "text-zinc-550" : "text-zinc-300",
+                                  )}
+                                >
                                   {step.title}
                                 </h5>
                                 <p className="text-[10px] text-zinc-400">{step.message}</p>
@@ -366,13 +402,19 @@ function Editor() {
                               <div className="ml-4 border-l border-zinc-850 pl-3 py-1 text-left">
                                 <button
                                   type="button"
-                                  onClick={() => setExpandedThoughtId(expandedThoughtId === step.id ? null : step.id)}
+                                  onClick={() =>
+                                    setExpandedThoughtId(
+                                      expandedThoughtId === step.id ? null : step.id,
+                                    )
+                                  }
                                   className="flex items-center gap-1 text-[9px] text-gold hover:underline cursor-pointer select-none"
                                 >
                                   <Brain size={10} className="animate-pulse" />
-                                  {expandedThoughtId === step.id ? "Ocultar Pensamento" : "Ver Pensamento Teológico"}
+                                  {expandedThoughtId === step.id
+                                    ? "Ocultar Pensamento"
+                                    : "Ver Pensamento Teológico"}
                                 </button>
-                                
+
                                 {expandedThoughtId === step.id && (
                                   <div className="mt-1.5 bg-zinc-900 p-2.5 rounded border border-zinc-850 font-mono text-[9px] text-zinc-350 leading-relaxed whitespace-pre-wrap max-h-36 overflow-y-auto">
                                     {step.thought}
@@ -472,7 +514,9 @@ function Editor() {
         <div>
           <div className="mb-3 flex items-center justify-between">
             <div>
-              <h2 className="font-display text-xl font-semibold text-foreground">Desenvolvimento</h2>
+              <h2 className="font-display text-xl font-semibold text-foreground">
+                Desenvolvimento
+              </h2>
               <p className="text-xs text-muted-foreground">Os pontos centrais da mensagem</p>
             </div>
             <span className="text-xs text-muted-foreground">Arraste para reordenar</span>

@@ -26,27 +26,28 @@ export function SermonCard({ sermon, onDelete }: SermonCardProps) {
         {sermon.title || "Sem título"}
       </h3>
 
-      {sermon.baseVerse && (() => {
-        const parsed = parseBibleReference(sermon.baseVerse);
-        if (parsed) {
+      {sermon.baseVerse &&
+        (() => {
+          const parsed = parseBibleReference(sermon.baseVerse);
+          if (parsed) {
+            return (
+              <Link
+                to="/biblia"
+                search={{ book: parsed.book, chapter: parsed.chapter }}
+                className="mt-1.5 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline"
+              >
+                <BookOpen className="size-3.5" />
+                {sermon.baseVerse}
+              </Link>
+            );
+          }
           return (
-            <Link
-              to="/biblia"
-              search={{ book: parsed.book, chapter: parsed.chapter }}
-              className="mt-1.5 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline"
-            >
+            <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-accent">
               <BookOpen className="size-3.5" />
               {sermon.baseVerse}
-            </Link>
+            </p>
           );
-        }
-        return (
-          <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-accent">
-            <BookOpen className="size-3.5" />
-            {sermon.baseVerse}
-          </p>
-        );
-      })()}
+        })()}
 
       {sermon.theme && (
         <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{sermon.theme}</p>

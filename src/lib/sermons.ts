@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { getSyncCode, getSupabaseConfig, syncSermonsWithCloud } from "./supabase";
+import { syncSermonsWithCloud } from "./firebase";
+import { useAuth } from "./auth";
 
 export interface Topic {
   id: string;
@@ -200,7 +201,11 @@ const SEED: Sermon[] = [
 ];
 
 function normalize(sermons: Sermon[]): Sermon[] {
-  return sermons.map((s) => ({ ...s, conclusion: s.conclusion ?? "", deleted: s.deleted ?? false }));
+  return sermons.map((s) => ({
+    ...s,
+    conclusion: s.conclusion ?? "",
+    deleted: s.deleted ?? false,
+  }));
 }
 
 function load(): Sermon[] {
@@ -223,6 +228,8 @@ function persist(sermons: Sermon[]) {
 }
 
 export function useSermons() {
+  const { user, loading: authLoading } = useAuth();
+
   const [sermons, setSermons] = useState<Sermon[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [syncStatus, setSyncStatus] = useState<
@@ -240,70 +247,77 @@ export function useSermons() {
     if (last) setLastSyncedAt(Number(last));
   }, []);
 
-  const triggerSync = useCallback(async (customList?: Sermon[]) => {
-    const syncCode = getSyncCode();
-    const config = getSupabaseConfig();
-    if (!syncCode || !config) {
-      setSyncStatus("not_configured");
-      return;
-    }
+  const triggerSync = useCallback(
+    async (customList?: Sermon[]) => {
+      const userId = user?.uid ?? null;
 
-    setSyncStatus("syncing");
-    try {
-      const listToSync = customList || load();
-      const { syncedSermons } = await syncSermonsWithCloud(listToSync);
-
-      persist(syncedSermons);
-      setSermons(syncedSermons.filter((s) => !s.deleted));
-      setSyncStatus("success");
-      const now = Date.now();
-      setLastSyncedAt(now);
-      window.localStorage.setItem("pregadynamic.last_synced_at", String(now));
-    } catch (err) {
-      console.error("Erro na sincronização:", err);
-      if (typeof navigator !== "undefined" && navigator.onLine === false) {
-        setSyncStatus("offline");
-      } else {
-        setSyncStatus("error");
-      }
-    }
-  }, []);
-
-  // Iniciar sincronização automática após carregar, se configurado
-  useEffect(() => {
-    if (loaded) {
-      const syncCode = getSyncCode();
-      if (syncCode) {
-        triggerSync();
-      } else {
+      if (!userId) {
         setSyncStatus("not_configured");
+        return;
       }
+
+      setSyncStatus("syncing");
+      try {
+        const listToSync = customList || load();
+        const { syncedSermons } = await syncSermonsWithCloud(listToSync, userId);
+
+        persist(syncedSermons);
+        setSermons(syncedSermons.filter((s) => !s.deleted));
+        setSyncStatus("success");
+        const now = Date.now();
+        setLastSyncedAt(now);
+        window.localStorage.setItem("pregadynamic.last_synced_at", String(now));
+      } catch (err) {
+        console.error("Erro na sincronização:", err);
+        if (typeof navigator !== "undefined" && navigator.onLine === false) {
+          setSyncStatus("offline");
+        } else {
+          setSyncStatus("error");
+        }
+      }
+    },
+    [user],
+  );
+
+  // Iniciar sincronização automática após carregar e auth resolver
+  useEffect(() => {
+    if (!loaded || authLoading) return;
+
+    if (user) {
+      // Logado com Google — sincroniza automaticamente
+      triggerSync();
+    } else {
+      setSyncStatus("not_configured");
     }
-  }, [loaded, triggerSync]);
+  }, [loaded, authLoading, user, triggerSync]);
 
-  const saveSermon = useCallback((sermon: Sermon) => {
-    const all = load();
-    const updated = { ...sermon, updatedAt: Date.now(), deleted: false };
-    const exists = all.some((s) => s.id === sermon.id);
-    const next = exists
-      ? all.map((s) => (s.id === sermon.id ? updated : s))
-      : [updated, ...all];
+  const saveSermon = useCallback(
+    (sermon: Sermon) => {
+      const all = load();
+      const updated = { ...sermon, updatedAt: Date.now(), deleted: false };
+      const exists = all.some((s) => s.id === sermon.id);
+      const next = exists ? all.map((s) => (s.id === sermon.id ? updated : s)) : [updated, ...all];
 
-    persist(next);
-    setSermons(next.filter((s) => !s.deleted));
-    triggerSync(next);
-  }, [triggerSync]);
+      persist(next);
+      setSermons(next.filter((s) => !s.deleted));
+      triggerSync(next);
+    },
+    [triggerSync],
+  );
 
-  const deleteSermon = useCallback((id: string) => {
-    const all = load();
-    const next = all.map((s) =>
-      s.id === id ? { ...s, deleted: true, updatedAt: Date.now() } : s,
-    );
+  const deleteSermon = useCallback(
+    (id: string) => {
+      const all = load();
+      const next = all.map((s) =>
+        s.id === id ? { ...s, deleted: true, updatedAt: Date.now() } : s,
+      );
 
-    persist(next);
-    setSermons(next.filter((s) => !s.deleted));
-    triggerSync(next);
-  }, [triggerSync]);
+      persist(next);
+      setSermons(next.filter((s) => !s.deleted));
+      triggerSync(next);
+    },
+    [triggerSync],
+  );
 
   return { sermons, loaded, saveSermon, deleteSermon, syncStatus, lastSyncedAt, triggerSync };
 }

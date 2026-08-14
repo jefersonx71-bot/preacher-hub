@@ -3,6 +3,6 @@ export function getApiUrl(path: string): string {
   if (typeof window !== "undefined" && (window as any).Capacitor?.isNative) {
     return `https://preacher-hub.vercel.app${path}`;
   }
-  
+
   return path;
 }

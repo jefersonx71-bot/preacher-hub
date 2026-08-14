@@ -146,7 +146,7 @@ Tamanho do rascunho recebido: ${text.length} caracteres.
                 if (!apiKey) {
                   // Fallback offline simulated stream
                   console.warn("Sem chave de API configurada. Usando simulador offline.");
-                  
+
                   // Try to find a Bible passage inside the pasted text to make the mock look slightly smart
                   let detectedPassage = "Filipenses 4:13";
                   const regex = /([12]\s+)?[A-Z][a-zà-ÿ]+\s+\d+:\d+(-\d+)?/;
@@ -287,16 +287,19 @@ Se você quer quebrar o orgulho da autossuficiência e declarar sua dependência
             headers: {
               "Content-Type": "text/event-stream",
               "Cache-Control": "no-cache",
-              "Connection": "keep-alive",
+              Connection: "keep-alive",
               ...corsHeaders,
             },
           });
         } catch (error: any) {
           console.error("Outer route error:", error);
-          return new Response(JSON.stringify({ error: error.message || "Erro interno no servidor." }), {
-            status: 500,
-            headers: { "Content-Type": "application/json", ...corsHeaders },
-          });
+          return new Response(
+            JSON.stringify({ error: error.message || "Erro interno no servidor." }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
         }
       },
     },

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Preacher Hub</string>
+    <string name="title_activity_main">Preacher Hub</string>
+    <string name="package_name">com.preacherhub.app</string>
+    <string name="custom_url_scheme">com.preacherhub.app</string>
+</resources>

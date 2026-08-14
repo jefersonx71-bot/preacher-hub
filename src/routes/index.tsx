@@ -1,20 +1,25 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { 
-  BookOpen, Plus, Search, Sparkles, Wand2, 
-  Cloud, CloudOff, Key, Copy, Check, 
-  Database, AlertCircle, Loader2 
+import {
+  BookOpen,
+  Plus,
+  Search,
+  Sparkles,
+  Wand2,
+  Cloud,
+  CloudOff,
+  AlertCircle,
+  Loader2,
+  LogOut,
+  User,
 } from "lucide-react";
 import { useSermons } from "@/lib/sermons";
+import { useAuth } from "@/lib/auth";
 import { SermonCard } from "@/components/SermonCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { 
-  getSyncCode, saveSyncCode, 
-  getSupabaseConfig, saveSupabaseConfig 
-} from "@/lib/supabase";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
@@ -39,112 +44,64 @@ export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
+function GoogleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+        fill="#4285F4"
+      />
+      <path
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+        fill="#34A853"
+      />
+      <path
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+        fill="#FBBC05"
+      />
+      <path
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+        fill="#EA4335"
+      />
+    </svg>
+  );
+}
+
 function Dashboard() {
-  const { 
-    sermons, 
-    deleteSermon, 
-    syncStatus, 
-    lastSyncedAt, 
-    triggerSync 
-  } = useSermons();
+  const { sermons, deleteSermon, syncStatus, lastSyncedAt, triggerSync } = useSermons();
+  const { user, loading: authLoading, signIn, signOut, isAuthenticated } = useAuth();
 
   const [query, setQuery] = useState("");
   const [showSyncSettings, setShowSyncSettings] = useState(false);
-  const [currentSyncCode, setCurrentSyncCode] = useState<string | null>(null);
-  const [tempSyncCode, setTempSyncCode] = useState("");
-  const [dbUrl, setDbUrl] = useState("");
-  const [dbKey, setDbKey] = useState("");
-  const [showAdvancedDb, setShowAdvancedDb] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
 
-  // Carregar dados salvos ao montar componente
-  useEffect(() => {
-    const code = getSyncCode();
-    setCurrentSyncCode(code);
-    if (code) {
-      setTempSyncCode(code);
-    }
-
-    const config = getSupabaseConfig();
-    if (config) {
-      setDbUrl(config.url);
-      setDbKey(config.anonKey);
-    }
-  }, []);
-
-  const handleGenerateCode = () => {
-    const rand = () => Math.random().toString(36).substring(2, 7);
-    const code = `prega-${rand()}-${rand()}`;
-    setTempSyncCode(code);
-  };
-
-  const handleApplySyncCode = async () => {
-    const code = tempSyncCode.trim();
-    if (!code) {
-      toast.error("O código de sincronização não pode ser vazio.");
-      return;
-    }
-
-    const config = getSupabaseConfig();
-    if (!config) {
-      toast.warning("Configure o banco de dados Supabase nas opções avançadas para ativar.");
-      setShowAdvancedDb(true);
-      return;
-    }
-
-    saveSyncCode(code);
-    setCurrentSyncCode(code);
-    toast.success("Código de sincronização configurado!");
-    await triggerSync();
-  };
-
-  const handleDisableSync = () => {
-    saveSyncCode(null);
-    setCurrentSyncCode(null);
-    setTempSyncCode("");
-    toast.success("Sincronização online desativada.");
-  };
-
-  const handleCopyCode = () => {
-    if (!currentSyncCode) return;
-    navigator.clipboard.writeText(currentSyncCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    toast.success("Código copiado!");
-  };
-
-  const handleSaveCustomDb = () => {
-    const url = dbUrl.trim();
-    const key = dbKey.trim();
-
-    if (!url || !key) {
-      toast.error("Preencha a URL e a Anon Key do Supabase.");
-      return;
-    }
-
-    saveSupabaseConfig({ url, anonKey: key });
-    toast.success("Credenciais do Supabase salvas!");
-    
-    const code = getSyncCode();
-    if (code) {
-      triggerSync();
+  const handleGoogleSignIn = async () => {
+    setSigningIn(true);
+    try {
+      await signIn();
+    } catch (err) {
+      console.error("Erro ao fazer login:", err);
+      toast.error("Erro ao fazer login com Google. Tente novamente.");
+    } finally {
+      setSigningIn(false);
     }
   };
 
-  const handleResetDbConfig = () => {
-    saveSupabaseConfig(null);
-    setDbUrl("");
-    setDbKey("");
-    toast.success("Credenciais redefinidas para o padrão (.env)");
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("Desconectado com sucesso.");
+    } catch (err) {
+      console.error("Erro ao sair:", err);
+      toast.error("Erro ao desconectar.");
+    }
   };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return sermons
       .filter((s) =>
-        q
-          ? s.title.toLowerCase().includes(q) || s.baseVerse.toLowerCase().includes(q)
-          : true,
+        q ? s.title.toLowerCase().includes(q) || s.baseVerse.toLowerCase().includes(q) : true,
       )
       .sort((a, b) => b.updatedAt - a.updatedAt);
   }, [sermons, query]);
@@ -169,11 +126,14 @@ function Dashboard() {
               aria-label="Configurações de Sincronização"
               className={cn(
                 "flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs font-medium transition-colors hover:bg-secondary cursor-pointer",
-                syncStatus === "success" && "text-emerald-500 border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10",
+                syncStatus === "success" &&
+                  "text-emerald-500 border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10",
                 syncStatus === "syncing" && "text-gold border-gold/20 bg-gold/5",
-                syncStatus === "error" && "text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/10",
+                syncStatus === "error" &&
+                  "text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/10",
                 syncStatus === "offline" && "text-muted-foreground border-border bg-secondary/20",
-                syncStatus === "not_configured" && "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                syncStatus === "not_configured" &&
+                  "text-muted-foreground hover:text-foreground hover:bg-secondary",
               )}
             >
               {syncStatus === "syncing" && <Loader2 className="size-3.5 animate-spin text-gold" />}
@@ -181,7 +141,7 @@ function Dashboard() {
               {syncStatus === "error" && <AlertCircle className="size-3.5" />}
               {syncStatus === "offline" && <CloudOff className="size-3.5" />}
               {syncStatus === "not_configured" && <Cloud className="size-3.5" />}
-              
+
               <span className="hidden sm:inline">
                 {syncStatus === "syncing" && "Sincronizando..."}
                 {syncStatus === "success" && "Sincronizado"}
@@ -194,14 +154,14 @@ function Dashboard() {
           </div>
         </header>
 
-        {/* Painel de Sincronização Online */}
+        {/* Painel de Sincronização */}
         {showSyncSettings && (
           <div className="mt-4 rounded-xl border border-border bg-card p-5 shadow-soft space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="font-display text-sm font-semibold text-foreground flex items-center gap-2">
                 <Cloud className="size-4.5 text-gold" /> Sincronização Online
               </h3>
-              <button 
+              <button
                 onClick={() => setShowSyncSettings(false)}
                 className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
               >
@@ -212,167 +172,132 @@ function Dashboard() {
             {/* Status da Sincronização */}
             <div className="flex flex-wrap items-center justify-between gap-3 bg-secondary/15 p-3 rounded-lg border border-border/50 text-xs">
               <div className="space-y-0.5">
-                <span className="block text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Status do Sync</span>
+                <span className="block text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                  Status do Sync
+                </span>
                 <span className="font-medium text-foreground flex items-center gap-1.5">
                   {syncStatus === "syncing" && "Sincronizando com a nuvem..."}
                   {syncStatus === "success" && "Esboços sincronizados e seguros!"}
                   {syncStatus === "error" && "Erro ao conectar com o banco de dados."}
                   {syncStatus === "offline" && "Dispositivo sem internet. Sync em pausa."}
-                  {syncStatus === "not_configured" && "Sincronização desativada (Modo Local)"}
+                  {syncStatus === "not_configured" && "Faça login para ativar a sincronização"}
                 </span>
               </div>
               {lastSyncedAt && (
                 <div className="text-right">
-                  <span className="block text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Último Sync</span>
+                  <span className="block text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                    Último Sync
+                  </span>
                   <span className="font-medium text-foreground">
-                    {new Date(lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    {new Date(lastSyncedAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Configurar Código */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground block">
-                Código de Sincronização (Sync Code)
-              </label>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Insira um código exclusivo (ex: seu e-mail ou frase secreta) para sincronizar seus esboços com o celular ou tablet.
-              </p>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Key className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/70" />
-                  <Input
-                    type="text"
-                    value={tempSyncCode}
-                    onChange={(e) => setTempSyncCode(e.target.value)}
-                    placeholder="Ex: pastor-marcos-sync"
-                    className="pl-9 bg-background/50 h-10 border-border text-sm"
-                  />
-                </div>
-                <Button 
-                  type="button" 
-                  variant="secondary"
-                  onClick={handleGenerateCode}
-                  className="h-10 text-xs px-3"
-                >
-                  Gerar Código
-                </Button>
-              </div>
-              <div className="flex gap-2 pt-1">
-                <Button
-                  onClick={handleApplySyncCode}
-                  disabled={syncStatus === "syncing"}
-                  className="flex-1 h-9 text-xs"
-                >
-                  {currentSyncCode ? "Atualizar Código" : "Ativar Sincronização"}
-                </Button>
-                {currentSyncCode && (
-                  <Button
-                    onClick={handleDisableSync}
-                    variant="outline"
-                    className="h-9 text-xs border-destructive/20 text-destructive hover:bg-destructive/10"
-                  >
-                    Desativar
-                  </Button>
-                )}
-              </div>
-
-              {currentSyncCode && (
-                <div className="flex items-center justify-between text-xs border border-border bg-background/30 rounded-lg p-2.5 mt-2">
-                  <span className="text-muted-foreground font-medium">Código Ativo no Dispositivo:</span>
-                  <div className="flex items-center gap-1.5">
-                    <code className="font-mono text-gold font-bold bg-gold/5 px-2 py-0.5 rounded border border-gold/15">
-                      {currentSyncCode}
-                    </code>
-                    <button
-                      onClick={handleCopyCode}
-                      className="text-muted-foreground hover:text-foreground transition-colors p-1"
-                      title="Copiar código"
-                    >
-                      {copied ? <Check className="size-3.5 text-emerald-500" /> : <Copy className="size-3.5" />}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Configurações de Banco customizadas */}
-            <div className="border-t border-border/60 pt-3">
-              <button
-                type="button"
-                onClick={() => setShowAdvancedDb((prev) => !prev)}
-                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-semibold cursor-pointer"
-              >
-                <Database className="size-3.5" />
-                {showAdvancedDb ? "Ocultar Configurações de Banco" : "Configurar Banco de Dados Próprio (Self-Hosting)"}
-              </button>
-
-              {showAdvancedDb && (
-                <div className="mt-3 space-y-3 p-3 bg-secondary/5 border border-border rounded-lg animate-in fade-in slide-in-from-top-1 duration-150">
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Você pode criar um banco gratuito no <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="text-gold underline font-medium">Supabase</a>, rodar o script SQL de criação de tabela (disponível no arquivo <code className="font-mono bg-secondary/50 px-1 rounded">supabase.sql</code> no repositório) e preencher os dados abaixo para usar seu banco próprio.
+            {/* ── Login com Google (método principal) ── */}
+            {!authLoading && !isAuthenticated && (
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground block">
+                    Entrar com sua conta
+                  </label>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Faça login com Google para sincronizar automaticamente em todos os seus
+                    dispositivos. Basta entrar com a mesma conta.
                   </p>
-                  <div className="space-y-2.5">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                        Supabase Project URL
-                      </label>
-                      <Input
-                        type="text"
-                        value={dbUrl}
-                        onChange={(e) => setDbUrl(e.target.value)}
-                        placeholder="https://xxxxxx.supabase.co"
-                        className="h-8 text-xs bg-background/50"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                        Supabase Public Anon Key
-                      </label>
-                      <Input
-                        type="password"
-                        value={dbKey}
-                        onChange={(e) => setDbKey(e.target.value)}
-                        placeholder="Chave anônima pública (anon key)"
-                        className="h-8 text-xs bg-background/50"
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        onClick={handleSaveCustomDb}
-                        className="h-8 text-xs flex-1"
-                        variant="secondary"
-                      >
-                        Salvar Credenciais
-                      </Button>
-                      {(dbUrl || dbKey) && (
-                        <Button
-                          type="button"
-                          onClick={handleResetDbConfig}
-                          className="h-8 text-xs border-dashed"
-                          variant="outline"
-                        >
-                          Limpar
-                        </Button>
-                      )}
-                    </div>
-                  </div>
                 </div>
-              )}
-            </div>
+                <Button
+                  onClick={handleGoogleSignIn}
+                  disabled={signingIn}
+                  className="w-full h-11 gap-3 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-sm font-medium text-sm"
+                >
+                  {signingIn ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <GoogleIcon className="size-5" />
+                  )}
+                  {signingIn ? "Entrando..." : "Entrar com Google"}
+                </Button>
+              </div>
+            )}
+
+            {/* ── Loading auth ── */}
+            {authLoading && (
+              <div className="flex items-center justify-center gap-2 py-4 text-xs text-muted-foreground">
+                <Loader2 className="size-4 animate-spin" />
+                Verificando autenticação...
+              </div>
+            )}
+
+            {/* ── Perfil do usuário logado ── */}
+            {!authLoading && isAuthenticated && user && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 bg-emerald-500/5 border border-emerald-500/15 rounded-lg p-3">
+                  {user.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt="Avatar"
+                      className="size-10 rounded-full border-2 border-emerald-500/20"
+                    />
+                  ) : (
+                    <div className="flex size-10 items-center justify-center rounded-full bg-emerald-500/10 border-2 border-emerald-500/20">
+                      <User className="size-5 text-emerald-500" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground truncate">
+                      {user.displayName || user.email}
+                    </p>
+                    {user.displayName && (
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    )}
+                    <p className="text-[10px] text-emerald-500 font-medium uppercase tracking-wider mt-0.5">
+                      Sync automático ativo
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleSignOut}
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2 text-xs text-muted-foreground hover:text-destructive"
+                  >
+                    <LogOut className="size-3.5 mr-1" />
+                    Sair
+                  </Button>
+                </div>
+
+                <button
+                  onClick={() => triggerSync()}
+                  disabled={syncStatus === "syncing"}
+                  className="w-full flex items-center justify-center gap-2 rounded-lg border border-border bg-secondary/20 px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-secondary/40 cursor-pointer disabled:opacity-50"
+                >
+                  {syncStatus === "syncing" ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Cloud className="size-3.5" />
+                  )}
+                  {syncStatus === "syncing" ? "Sincronizando..." : "Forçar Sincronização"}
+                </button>
+              </div>
+            )}
 
             {/* Dica sobre Modo Offline */}
             <div className="flex gap-2.5 items-start bg-secondary/5 border border-border/60 p-3 rounded-lg text-xs text-muted-foreground mt-3">
               <AlertCircle className="size-4.5 text-gold shrink-0 mt-0.5" />
               <p className="leading-relaxed">
-                <strong className="text-foreground">Dica de Púlpito:</strong> Seus esboços são salvos no navegador automaticamente e funcionam <strong className="text-gold">100% offline</strong> sem internet. A sincronização em nuvem serve para compartilhar os esboços com seus outros aparelhos.
+                <strong className="text-foreground">Dica de Púlpito:</strong> Seus esboços são
+                salvos no navegador automaticamente e funcionam{" "}
+                <strong className="text-gold">100% offline</strong> sem internet. A sincronização em
+                nuvem serve para compartilhar os esboços com seus outros aparelhos.
               </p>
             </div>
           </div>
         )}
-
 
         {/* AI import banner */}
         <Link
@@ -413,13 +338,9 @@ function Dashboard() {
           </span>
         </Link>
 
-
-
         {/* List Header with Search */}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="font-display text-lg font-semibold text-foreground">
-            Esboços salvos
-          </h2>
+          <h2 className="font-display text-lg font-semibold text-foreground">Esboços salvos</h2>
           <div className="relative w-full sm:w-72">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/70" />
             <Input

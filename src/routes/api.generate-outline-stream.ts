@@ -263,7 +263,7 @@ Se você reconhece que suas forças se esgotaram e quer a unção do Espírito p
 
                 // Parse accumulated markdown into structured Sermon object
                 const parsedSermonFields = parseMarkdownToSermon(accumulatedResult);
-                
+
                 // Complete drafting step
                 send({
                   type: "step",
@@ -281,28 +281,33 @@ Se você reconhece que suas forças se esgotaram e quer a unção do Espírito p
                 send({ type: "done" });
               } catch (e: unknown) {
                 console.error("Stream generation error:", e);
-                send({ type: "error", message: e instanceof Error ? e.message : "Falha desconhecida no stream." });
+                send({
+                  type: "error",
+                  message: e instanceof Error ? e.message : "Falha desconhecida no stream.",
+                });
               } finally {
                 controller.close();
               }
             },
           });
 
-            return new Response(stream, {
-              headers: {
-                "Content-Type": "text/event-stream",
-                "Cache-Control": "no-cache",
-                "Connection": "keep-alive",
-                ...corsHeaders,
-              },
-            });
-
+          return new Response(stream, {
+            headers: {
+              "Content-Type": "text/event-stream",
+              "Cache-Control": "no-cache",
+              Connection: "keep-alive",
+              ...corsHeaders,
+            },
+          });
         } catch (error: unknown) {
           console.error("Erro no proxy da API:", error);
-          return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Erro desconhecido" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json", ...corsHeaders },
-          });
+          return new Response(
+            JSON.stringify({ error: error instanceof Error ? error.message : "Erro desconhecido" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
         }
       },
     },

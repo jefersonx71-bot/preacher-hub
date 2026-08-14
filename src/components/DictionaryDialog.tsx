@@ -124,7 +124,8 @@ export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogP
             Dicionário inteligente
           </DialogTitle>
           <DialogDescription>
-            Buscou um termo ou deu um branco? Pesquise um nome ou palavra e receba um mini estudo na hora.
+            Buscou um termo ou deu um branco? Pesquise um nome ou palavra e receba um mini estudo na
+            hora.
           </DialogDescription>
         </DialogHeader>
 
@@ -168,9 +169,7 @@ export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogP
             )}
             <div>
               <h3 className="font-display text-2xl font-semibold text-foreground">{result.term}</h3>
-              {result.meaning && (
-                <p className="mt-1 text-sm italic text-gold">{result.meaning}</p>
-              )}
+              {result.meaning && <p className="mt-1 text-sm italic text-gold">{result.meaning}</p>}
             </div>
 
             {result.summary && (
@@ -223,7 +222,8 @@ export function DictionaryDialog({ open, term, onOpenChange }: DictionaryDialogP
             {result.connections && result.connections.length > 0 && (
               <div className="space-y-3 mt-4 border-t border-border/60 pt-4">
                 <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  <Sparkles className="size-3.5 text-gold" /> Conexões &amp; Paralelos de Fé (Mesmo Peso Espiritual)
+                  <Sparkles className="size-3.5 text-gold" /> Conexões &amp; Paralelos de Fé (Mesmo
+                  Peso Espiritual)
                 </h4>
                 <div className="grid gap-2.5 sm:grid-cols-2">
                   {result.connections.map((conn) => {

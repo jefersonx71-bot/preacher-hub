@@ -21,7 +21,7 @@ export function SortableTopic({ topic, index, onChange, onRemove }: Props) {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.6 : 1,
-    zIndex: isDragging ? 10 : "auto" as const,
+    zIndex: isDragging ? 10 : ("auto" as const),
   };
 
   return (

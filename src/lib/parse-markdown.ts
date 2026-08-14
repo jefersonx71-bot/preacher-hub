@@ -1,6 +1,8 @@
 import { type Sermon, type Topic, uid } from "./sermons";
 
-export function parseMarkdownToSermon(markdown: string): Omit<Sermon, "id" | "createdAt" | "updatedAt"> {
+export function parseMarkdownToSermon(
+  markdown: string,
+): Omit<Sermon, "id" | "createdAt" | "updatedAt"> {
   const lines = markdown.split("\n");
   let title = "";
   let baseVerse = "";
@@ -9,7 +11,7 @@ export function parseMarkdownToSermon(markdown: string): Omit<Sermon, "id" | "cr
   let introduction = "";
   let conclusion = "";
   let appeal = "";
-  let topics: { title: string; content: string }[] = [];
+  const topics: { title: string; content: string }[] = [];
 
   let currentSection = "";
   let currentTopicTitle = "";
@@ -19,7 +21,13 @@ export function parseMarkdownToSermon(markdown: string): Omit<Sermon, "id" | "cr
     const line = lines[i];
     const trimmed = line.trim();
 
-    if (!trimmed && currentSection !== "intro" && currentSection !== "conclusion" && currentSection !== "appeal" && currentSection !== "development") {
+    if (
+      !trimmed &&
+      currentSection !== "intro" &&
+      currentSection !== "conclusion" &&
+      currentSection !== "appeal" &&
+      currentSection !== "development"
+    ) {
       continue;
     }
 

@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, BookOpen, BookText, ChevronDown, Loader2, Plus, Sparkles, X } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  BookText,
+  ChevronDown,
+  Loader2,
+  Plus,
+  Sparkles,
+  X,
+} from "lucide-react";
 import { getSermon, useSermons, type Sermon, type Topic } from "@/lib/sermons";
 import { expandTopicContent } from "@/lib/enrich.functions";
 import { PulpitTimer } from "@/components/PulpitTimer";
@@ -66,7 +75,7 @@ function Pulpit() {
       });
 
       const updatedTopics = sermon.topics.map((t) =>
-        t.id === topicId ? { ...t, content: result.expandedContent } : t
+        t.id === topicId ? { ...t, content: result.expandedContent } : t,
       );
       const updatedSermon = { ...sermon, topics: updatedTopics };
       setSermon(updatedSermon);
@@ -90,12 +99,15 @@ function Pulpit() {
     const targetTopic = sermon.topics.find((t) => t.id === topicId);
     if (!targetTopic) return;
 
-    const lines = (targetTopic.content || "").split("\n").map(l => l.trim()).filter(Boolean);
+    const lines = (targetTopic.content || "")
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean);
     const updatedLines = lines.filter((_, i) => i !== lineIndex);
     const newContent = updatedLines.join("\n");
 
     const updatedTopics = sermon.topics.map((t) =>
-      t.id === topicId ? { ...t, content: newContent } : t
+      t.id === topicId ? { ...t, content: newContent } : t,
     );
     const updatedSermon = { ...sermon, topics: updatedTopics };
     setSermon(updatedSermon);
@@ -109,12 +121,10 @@ function Pulpit() {
 
     const current = targetTopic.content || "";
     const cleanText = textToAdd.trim().replace(/^•\s*/, "");
-    const newContent = current.trim()
-      ? `${current.trim()}\n• ${cleanText}`
-      : `• ${cleanText}`;
+    const newContent = current.trim() ? `${current.trim()}\n• ${cleanText}` : `• ${cleanText}`;
 
     const updatedTopics = sermon.topics.map((t) =>
-      t.id === topicId ? { ...t, content: newContent } : t
+      t.id === topicId ? { ...t, content: newContent } : t,
     );
     const updatedSermon = { ...sermon, topics: updatedTopics };
     setSermon(updatedSermon);
@@ -223,17 +233,21 @@ function Pulpit() {
         </div>
 
         {sermon.introduction && (
-          <div className={cn(
-            "mt-8 overflow-hidden rounded-2xl border shadow-soft transition-colors",
-            introOpen ? "border-gold/50" : "border-border",
-          )}>
+          <div
+            className={cn(
+              "mt-8 overflow-hidden rounded-2xl border shadow-soft transition-colors",
+              introOpen ? "border-gold/50" : "border-border",
+            )}
+          >
             <button
               type="button"
               onClick={() => setIntroOpen(!introOpen)}
               aria-expanded={introOpen}
               className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left bg-card border-l-4 border-gold rounded-l-none"
             >
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Introdução</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                Introdução
+              </span>
               <ChevronDown
                 className={cn(
                   "size-5 shrink-0 text-gold transition-transform duration-300",
@@ -313,7 +327,7 @@ function Pulpit() {
                     <Sparkles className="size-4" />
                   </button>
                 </div>
-                 <div
+                <div
                   className={cn(
                     "grid transition-all duration-300 ease-in-out",
                     isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
@@ -322,8 +336,11 @@ function Pulpit() {
                   <div className="overflow-hidden px-5 pb-5 pt-1">
                     {(() => {
                       const content = topic.content || "Sem conteúdo detalhado.";
-                      const lines = content.split("\n").map(l => l.trim()).filter(Boolean);
-                      
+                      const lines = content
+                        .split("\n")
+                        .map((l) => l.trim())
+                        .filter(Boolean);
+
                       if (lines.length === 0 || content === "Sem conteúdo detalhado.") {
                         return (
                           <p className="text-lg leading-relaxed text-foreground/50 italic">
@@ -331,7 +348,7 @@ function Pulpit() {
                           </p>
                         );
                       }
-                      
+
                       return (
                         <ul className="space-y-3">
                           {lines.map((line, index) => (
@@ -368,17 +385,21 @@ function Pulpit() {
         </div>
 
         {sermon.conclusion && (
-          <div className={cn(
-            "mt-8 overflow-hidden rounded-2xl border shadow-soft transition-colors",
-            conclusionOpen ? "border-gold/50" : "border-border",
-          )}>
+          <div
+            className={cn(
+              "mt-8 overflow-hidden rounded-2xl border shadow-soft transition-colors",
+              conclusionOpen ? "border-gold/50" : "border-border",
+            )}
+          >
             <button
               type="button"
               onClick={() => setConclusionOpen(!conclusionOpen)}
               aria-expanded={conclusionOpen}
               className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left bg-card border-l-4 border-gold rounded-l-none"
             >
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Conclusão</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                Conclusão
+              </span>
               <ChevronDown
                 className={cn(
                   "size-5 shrink-0 text-gold transition-transform duration-300",
@@ -406,17 +427,21 @@ function Pulpit() {
         )}
 
         {sermon.appeal && (
-          <div className={cn(
-            "relative mt-4 overflow-hidden rounded-2xl border shadow-soft transition-colors",
-            appealOpen ? "border-red-500/50" : "border-border",
-          )}>
+          <div
+            className={cn(
+              "relative mt-4 overflow-hidden rounded-2xl border shadow-soft transition-colors",
+              appealOpen ? "border-red-500/50" : "border-border",
+            )}
+          >
             <button
               type="button"
               onClick={() => setAppealOpen(!appealOpen)}
               aria-expanded={appealOpen}
               className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left bg-red-500/5 dark:bg-red-500/10 border-l-4 border-red-500 rounded-l-none"
             >
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-red-500">Apelo (Decisão Prática)</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-red-500">
+                Apelo (Decisão Prática)
+              </span>
               <ChevronDown
                 className={cn(
                   "size-5 shrink-0 text-red-500 transition-transform duration-300",
@@ -451,7 +476,6 @@ function Pulpit() {
             </div>
           </div>
         )}
-
 
         <div className="mt-10 flex justify-center gap-3 text-sm">
           <button

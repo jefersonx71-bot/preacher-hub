@@ -1,7 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Lightbulb, Loader2, Plus, RefreshCw, Sparkles, Users, WifiOff } from "lucide-react";
+import {
+  BookOpen,
+  Lightbulb,
+  Loader2,
+  Plus,
+  RefreshCw,
+  Sparkles,
+  Users,
+  WifiOff,
+} from "lucide-react";
 import { parseBibleReference } from "@/lib/utils";
 import { toast } from "sonner";
 import {
@@ -48,7 +57,13 @@ function setCachedEntry(key: string, entry: EnrichResult) {
   }
 }
 
-export function EnrichDialog({ open, sermon, topic, onOpenChange, onAddContent }: EnrichDialogProps) {
+export function EnrichDialog({
+  open,
+  sermon,
+  topic,
+  onOpenChange,
+  onAddContent,
+}: EnrichDialogProps) {
   const enrich = useServerFn(enrichTopic);
   const [result, setResult] = useState<EnrichResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -84,13 +99,14 @@ export function EnrichDialog({ open, sermon, topic, onOpenChange, onAddContent }
           },
         });
         // When forcing more, merge unique references; replace illustrations/examples with fresh ideas.
-        const merged: EnrichResult = force && result
-          ? {
-              illustrations: [...result.illustrations, ...entry.illustrations],
-              examples: [...result.examples, ...entry.examples],
-              references: Array.from(new Set([...result.references, ...entry.references])),
-            }
-          : entry;
+        const merged: EnrichResult =
+          force && result
+            ? {
+                illustrations: [...result.illustrations, ...entry.illustrations],
+                examples: [...result.examples, ...entry.examples],
+                references: Array.from(new Set([...result.references, ...entry.references])),
+              }
+            : entry;
         setCachedEntry(key, merged);
         setResult(merged);
       } catch (e) {

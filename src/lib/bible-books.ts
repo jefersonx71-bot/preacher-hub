@@ -98,7 +98,7 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
   { id: "ntlh", label: "NTLH", fullName: "Nova Tradução na Linguagem de Hoje" },
   { id: "nvt", label: "NVT", fullName: "Nova Versão Transformadora" },
   { id: "naa", label: "NAA", fullName: "Nova Almeida Atualizada" },
-  { id: "interlinear", label: "Interlinear", fullName: "Interlinear Grego/Hebraico" }
+  { id: "interlinear", label: "Interlinear", fullName: "Interlinear Grego/Hebraico" },
 ];
 
 export function versionById(id: string): BibleVersion | undefined {

@@ -1,0 +1,9 @@
+{
+  "appId": "com.preacherhub.app",
+  "appName": "Preacher Hub",
+  "webDir": "dist/client",
+  "server": {
+    "url": "https://preacher-hub.vercel.app",
+    "cleartext": true
+  }
+}
