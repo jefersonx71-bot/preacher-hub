@@ -1,8 +1,7 @@
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   type Auth,
@@ -37,8 +36,7 @@ export async function signInWithGoogle() {
   const auth = getAuthInstance();
   if (!auth) throw new Error("Firebase não configurado.");
 
-  // Using redirect instead of popup for better Mobile WebView (Capacitor) support
-  await signInWithRedirect(auth, _googleProvider);
+  await signInWithPopup(auth, _googleProvider);
 }
 
 export async function signOut() {
@@ -79,11 +77,6 @@ function ensureAuthListener() {
   // onAuthStateChanged fires immediately with current state, then on every change
   onAuthStateChanged(auth, (user) => {
     emitChange({ user, loading: false });
-  });
-
-  // Catch any errors from the redirect flow (e.g. user cancelled, network error)
-  getRedirectResult(auth).catch((error) => {
-    console.error("Firebase Auth Redirect Error:", error);
   });
 }
 
