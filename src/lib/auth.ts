@@ -2,14 +2,14 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
-  signInWithCredential,
+  signInWithRedirect,
+  getRedirectResult,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   type Auth,
   type User,
 } from "firebase/auth";
 import { Capacitor } from "@capacitor/core";
-import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { getFirebaseApp } from "./firebase";
 import { useCallback, useSyncExternalStore } from "react";
 
@@ -40,25 +40,10 @@ export async function signInWithGoogle() {
   if (!auth) throw new Error("Firebase não configurado.");
 
   if (Capacitor.isNativePlatform()) {
-    try {
-      GoogleAuth.initialize({
-        clientId: "658028624905-nfmi82doiajrdfg40i4sd96gom7tc246.apps.googleusercontent.com",
-        scopes: ["profile", "email"],
-        grantOfflineAccess: true,
-      });
-
-      const googleUser = await GoogleAuth.signIn();
-      const idToken = googleUser.authentication.idToken;
-      
-      if (!idToken) throw new Error("Token do Google não recebido.");
-
-      const credential = GoogleAuthProvider.credential(idToken);
-      await signInWithCredential(auth, credential);
-    } catch (err) {
-      console.error("Erro no GoogleAuth Nativo:", err);
-      throw err;
-    }
+    // Usamos Redirect no mobile pois Popup falha dentro do WebView e UserAgent foi modificado
+    await signInWithRedirect(auth, _googleProvider);
   } else {
+    // Usamos Popup no PC para melhor experiência
     await signInWithPopup(auth, _googleProvider);
   }
 }
@@ -97,6 +82,11 @@ function ensureAuthListener() {
     emitChange({ user: null, loading: false });
     return;
   }
+
+  // Captura o retorno do redirecionamento do Google (mobile)
+  getRedirectResult(auth).catch((error) => {
+    console.error("Erro no redirecionamento do Google Auth:", error);
+  });
 
   // onAuthStateChanged fires immediately with current state, then on every change
   onAuthStateChanged(auth, (user) => {
