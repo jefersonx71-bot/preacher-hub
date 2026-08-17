@@ -2,11 +2,14 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithCredential,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   type Auth,
   type User,
 } from "firebase/auth";
+import { Capacitor } from "@capacitor/core";
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { getFirebaseApp } from "./firebase";
 import { useCallback, useSyncExternalStore } from "react";
 
@@ -36,7 +39,28 @@ export async function signInWithGoogle() {
   const auth = getAuthInstance();
   if (!auth) throw new Error("Firebase não configurado.");
 
-  await signInWithPopup(auth, _googleProvider);
+  if (Capacitor.isNativePlatform()) {
+    try {
+      GoogleAuth.initialize({
+        clientId: "658028624905-nfmi82doiajrdfg40i4sd96gom7tc246.apps.googleusercontent.com",
+        scopes: ["profile", "email"],
+        grantOfflineAccess: true,
+      });
+
+      const googleUser = await GoogleAuth.signIn();
+      const idToken = googleUser.authentication.idToken;
+      
+      if (!idToken) throw new Error("Token do Google não recebido.");
+
+      const credential = GoogleAuthProvider.credential(idToken);
+      await signInWithCredential(auth, credential);
+    } catch (err) {
+      console.error("Erro no GoogleAuth Nativo:", err);
+      throw err;
+    }
+  } else {
+    await signInWithPopup(auth, _googleProvider);
+  }
 }
 
 export async function signOut() {

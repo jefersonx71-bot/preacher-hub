@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "658028624905",
+    "project_id": "preacher-hub",
+    "storage_bucket": "preacher-hub.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658028624905:android:0a43f695febed6e1f8ccd8",
+        "android_client_info": {
+          "package_name": "com.preacherhub.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658028624905-nfmi82doiajrdfg40i4sd96gom7tc246.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsGaz2d3JMCAEDWBvbbVpv4Vgilg1Il8E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658028624905-nfmi82doiajrdfg40i4sd96gom7tc246.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

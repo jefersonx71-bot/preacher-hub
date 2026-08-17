@@ -5,5 +5,12 @@
   "server": {
     "url": "https://preacher-hub.vercel.app",
     "cleartext": true
+  },
+  "plugins": {
+    "GoogleAuth": {
+      "scopes": ["profile", "email"],
+      "serverClientId": "658028624905-nfmi82doiajrdfg40i4sd96gom7tc246.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true
+    }
   }
 }
