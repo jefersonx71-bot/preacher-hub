@@ -1,15 +1,12 @@
 import {
   getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   type Auth,
   type User,
 } from "firebase/auth";
-import { Capacitor } from "@capacitor/core";
 import { getFirebaseApp } from "./firebase";
 import { useCallback, useSyncExternalStore } from "react";
 
@@ -31,23 +28,42 @@ export function getAuthInstance(): Auth | null {
   return _auth;
 }
 
-// ─── Auth actions ───────────────────────────────────────────────────────────
+// ─── Auth actions (PIN Sync) ───────────────────────────────────────────────────────────
 
-const _googleProvider = new GoogleAuthProvider();
+function generateRandomCode(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Removed confusing chars like 0/O, 1/I
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return `${code.slice(0, 3)}-${code.slice(3)}`;
+}
 
-export async function signInWithGoogle() {
+export async function generateSyncCode(): Promise<string> {
   const auth = getAuthInstance();
   if (!auth) throw new Error("Firebase não configurado.");
 
-  const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const code = generateRandomCode();
+  const email = `${code.replace("-", "").toLowerCase()}@sync.preacher-hub.app`;
+  const password = code.replace("-", ""); // Password sem traço
 
-  if (isMobile) {
-    // Usamos Redirect no mobile pois Popup falha dentro do WebView e UserAgent foi modificado
-    await signInWithRedirect(auth, _googleProvider);
-  } else {
-    // Usamos Popup no PC para melhor experiência
-    await signInWithPopup(auth, _googleProvider);
+  await createUserWithEmailAndPassword(auth, email, password);
+  return code;
+}
+
+export async function connectSyncCode(code: string): Promise<void> {
+  const auth = getAuthInstance();
+  if (!auth) throw new Error("Firebase não configurado.");
+
+  const cleanCode = code.replace(/[^A-Z0-9]/ig, "").toLowerCase();
+  if (cleanCode.length !== 6) {
+    throw new Error("O código deve ter 6 caracteres.");
   }
+
+  const email = `${cleanCode}@sync.preacher-hub.app`;
+  const password = cleanCode.toUpperCase();
+
+  await signInWithEmailAndPassword(auth, email, password);
 }
 
 export async function signOut() {
@@ -85,11 +101,6 @@ function ensureAuthListener() {
     return;
   }
 
-  // Captura o retorno do redirecionamento do Google (mobile)
-  getRedirectResult(auth).catch((error) => {
-    console.error("Erro no redirecionamento do Google Auth:", error);
-  });
-
   // onAuthStateChanged fires immediately with current state, then on every change
   onAuthStateChanged(auth, (user) => {
     emitChange({ user, loading: false });
@@ -116,10 +127,6 @@ function getServerSnapshot(): AuthSnapshot {
 export function useAuth() {
   const { user, loading } = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const handleSignIn = useCallback(async () => {
-    await signInWithGoogle();
-  }, []);
-
   const handleSignOut = useCallback(async () => {
     await signOut();
   }, []);
@@ -127,7 +134,8 @@ export function useAuth() {
   return {
     user,
     loading,
-    signIn: handleSignIn,
+    generateSyncCode,
+    connectSyncCode,
     signOut: handleSignOut,
     isAuthenticated: !!user,
   };
