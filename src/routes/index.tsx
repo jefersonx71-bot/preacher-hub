@@ -381,7 +381,12 @@ function Dashboard() {
 
         {/* List Header with Search */}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="font-display text-lg font-semibold text-foreground">Esboços salvos</h2>
+          <h2 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
+            Esboços salvos
+            <span className="inline-flex items-center justify-center rounded-full bg-secondary/80 px-2.5 py-0.5 text-xs font-medium text-muted-foreground border border-border">
+              {sermons.length}
+            </span>
+          </h2>
           <div className="relative w-full sm:w-72">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/70" />
             <Input
