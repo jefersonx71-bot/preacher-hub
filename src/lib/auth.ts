@@ -39,7 +39,9 @@ export async function signInWithGoogle() {
   const auth = getAuthInstance();
   if (!auth) throw new Error("Firebase não configurado.");
 
-  if (Capacitor.isNativePlatform()) {
+  const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  if (isMobile) {
     // Usamos Redirect no mobile pois Popup falha dentro do WebView e UserAgent foi modificado
     await signInWithRedirect(auth, _googleProvider);
   } else {
