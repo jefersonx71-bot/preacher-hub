@@ -294,10 +294,14 @@ function Dashboard() {
                     <p className="text-sm font-semibold text-foreground truncate">
                       {user.displayName || "Aparelho Conectado"}
                     </p>
-                    {user.displayName && (
+                    {user.email?.includes("@sync.preacher-hub.app") ? (
+                      <p className="text-xs text-muted-foreground truncate mt-0.5">
+                        Código: <strong className="text-foreground font-mono tracking-widest">{user.email.split("@")[0].toUpperCase().slice(0,3)}-{user.email.split("@")[0].toUpperCase().slice(3)}</strong>
+                      </p>
+                    ) : user.displayName ? (
                       <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                    )}
-                    <p className="text-[10px] text-emerald-500 font-medium uppercase tracking-wider mt-0.5">
+                    ) : null}
+                    <p className="text-[10px] text-emerald-500 font-medium uppercase tracking-wider mt-1">
                       Sync automático via PIN ativo
                     </p>
                   </div>
