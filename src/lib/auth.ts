@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
   type Auth,
   type User,
 } from "firebase/auth";
@@ -23,6 +25,8 @@ export function getAuthInstance(): Auth | null {
     const app = getFirebaseApp();
     if (!app) return null;
     _auth = getAuth(app);
+    // Força a persistência no localStorage (resolve problemas de reload e WebView)
+    setPersistence(_auth, browserLocalPersistence).catch(console.error);
   }
 
   return _auth;
